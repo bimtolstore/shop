@@ -222,7 +222,7 @@
             <input type="number" id="wa" name="wa" required>
         </div>
         <div class="form-group">
-            <label for="us">Username (Moonton/Facebook/Tiktok:</label>
+            <label for="us">Username (Moonton/Facebook/Tiktok):</label>
             <input type="text" id="us" name="us" required>
         </div>
         <div class="form-group">
@@ -255,211 +255,131 @@
             <label for="kode-promo">Kode Promo:</label>
             <div class="promo-group">
                 <input type="text" id="kode-promo" name="kode-promo">
-                <button type="button" onclick="applyPromoCode()">Gunakan</button>
+                <button type="button" id="cek-promo">Cek</button>
             </div>
             <div id="promo-detail" class="promo-detail"></div>
         </div>
         <div class="form-group">
-            <label for="metode-pembayaran">Metode Pembayaran:</label>
-            <select id="metode-pembayaran" name="metode-pembayaran" required>
-                <option value="">Pilih Metode Pembayaran</option>
-                <option value="qris">Qris (Manual)</option>
-                <option value="ALFA">TOPUP DI ALFA GROUP</option>
-                <option value="GOPAY">TRANSFER GOPAY</option>
-                <option value="DANA">TRANSFER DANA</option>
-                <option value="OVO">TRANSFER OVO</option>
-                <option value="SPAY">TRANSFER SPAY</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <button type="button" onclick="submitForm()">Submit</button>
+            <button type="submit">Order</button>
         </div>
     </form>
-    <div id="promo-detail" class="promo-detail" style="display: none; margin-top: 10px; color: #28a745;"></div>
-    </div>
 </div>
 
-<div id="promoModalSuccess" class="modal">
+<div id="order-modal" class="modal">
     <div class="modal-content">
-        <p>Promo berhasil digunakan!</p>
-        <button onclick="closeModal('promoModalSuccess')">OKAY</button>
-    </div>
-</div>
-
-<!-- Modal Failed -->
-<div id="promoModalFailed" class="modal">
-    <div class="modal-content">
-        <p>Kode promo tidak valid atau harga tidak memenuhi syarat minimum.</p>
-        <button onclick="closeModal('promoModalFailed')">OKAY</button>
-    </div>
-</div>
-
-<!-- Modal Submit Success -->
-<div id="submitModalSuccess" class="modal">
-    <div class="modal-content">
-        <p>Berhasil Mengirimkan ke database kami!! Silahkan tunggu WhatsApp dari admin untuk melanjutkan pembayaran!!</p>
-        <button onclick="closeModal('submitModalSuccess')">OKAY</button>
-    </div>
-</div>
-
-<!-- Modal Submit Failed -->
-<div id="submitModalFailed" class="modal">
-    <div class="modal-content">
-        <p>Gagal mengirim form, silahkan coba lagi.</p>
-        <button onclick="closeModal('submitModalFailed')">OKAY</button>
+        <p>Terima kasih! Order Anda sudah kami terima.</p>
+        <button id="close-modal">Tutup</button>
     </div>
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const items = document.querySelectorAll('.catalog-item');
+        const hargaInput = document.getElementById('harga');
+        const quantityInput = document.getElementById('quantity');
+        const decreaseQuantityButton = document.getElementById('decrease-quantity');
+        const increaseQuantityButton = document.getElementById('increase-quantity');
+        const kodePromoInput = document.getElementById('kode-promo');
+        const cekPromoButton = document.getElementById('cek-promo');
+        const promoDetail = document.getElementById('promo-detail');
+        let selectedItem = null;
+        let selectedPrice = 0;
 
-    const promoCodes = {
-    'AKHIRSEASON': { discount: 0.35, minPrice: 10000, maxDiscount: 50000 },
-    'SKAYJAGO': { discount: 0.20, minPrive: 10000000, maxDiscount: 50000 }
-};
+        items.forEach(item => {
+            item.addEventListener('click', function() {
+                items.forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedItem = item.getAttribute('data-value');
+                selectedPrice = parseInt(item.getAttribute('data-price'), 10);
+                updateHarga();
+            });
+        });
 
-const catalogItems = document.querySelectorAll('.catalog-item');
-catalogItems.forEach(item => {
-    item.addEventListener('click', function() {
-        catalogItems.forEach(i => i.classList.remove('selected'));
-        this.classList.add('selected');
-        updatePrice();
-    });
-});
-
-document.getElementById('increase-quantity').addEventListener('click', () => {
-    const quantityInput = document.getElementById('quantity');
-    quantityInput.value = parseInt(quantityInput.value) + 1;
-    updatePrice();
-});
-
-document.getElementById('decrease-quantity').addEventListener('click', () => {
-    const quantityInput = document.getElementById('quantity');
-    if (quantityInput.value > 1) {
-        quantityInput.value = parseInt(quantityInput.value) - 1;
-        updatePrice();
-    }
-});
-
-document.getElementById('quantity').addEventListener('change', () => {
-    if (document.getElementById('quantity').value < 1) {
-        document.getElementById('quantity').value = 1;
-    }
-    updatePrice();
-});
-
-document.getElementById('kode-promo').addEventListener('input', () => {
-    updatePrice();
-});
-
-function applyPromoCode() {
-    const selectedItem = document.querySelector('.catalog-item.selected');
-    if (!selectedItem) return;
-
-    let harga = parseInt(selectedItem.getAttribute('data-price'), 10) * parseInt(document.getElementById('quantity').value, 10);
-    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
-    const promoDetail = document.getElementById('promo-detail');
-
-    if (promoCodes[kodePromo]) {
-        let discount = promoCodes[kodePromo].discount * harga;
-        if (promoCodes[kodePromo].maxDiscount) {
-            discount = Math.min(discount, promoCodes[kodePromo].maxDiscount);
+        function updateHarga() {
+            const quantity = parseInt(quantityInput.value, 10);
+            const totalHarga = selectedPrice * quantity;
+            hargaInput.value = totalHarga;
         }
-        if (harga >= (promoCodes[kodePromo].minPrice || 0)) {
-            harga -= discount;
-            promoDetail.style.display = 'block';
-            promoDetail.innerHTML = `Kode promo "${kodePromo}" berhasil digunakan.<br> Anda mendapat diskon sebesar: Rp${discount.toLocaleString()}<br>`;
-            showModal('promoModalSuccess');
-            document.getElementById('harga').value = `Rp${harga.toLocaleString()}`;
-        } else {
+
+        decreaseQuantityButton.addEventListener('click', function() {
+            let quantity = parseInt(quantityInput.value, 10);
+            if (quantity > 1) {
+                quantityInput.value = --quantity;
+                updateHarga();
+            }
+        });
+
+        increaseQuantityButton.addEventListener('click', function() {
+            let quantity = parseInt(quantityInput.value, 10);
+            quantityInput.value = ++quantity;
+            updateHarga();
+        });
+
+        cekPromoButton.addEventListener('click', function() {
+            const promoCode = kodePromoInput.value.trim().toUpperCase();
+            if (promoCode === 'DISKON10') {
+                const discount = 0.1 * parseInt(hargaInput.value, 10);
+                const newPrice = parseInt(hargaInput.value, 10) - discount;
+                hargaInput.value = newPrice;
+                promoDetail.textContent = `Kode promo diterima! Anda mendapatkan diskon 10%. Harga baru: Rp${newPrice}`;
+                promoDetail.style.display = 'block';
+            } else {
+                promoDetail.textContent = 'Kode promo tidak valid!';
+                promoDetail.style.display = 'block';
+            }
+        });
+
+        const form = document.getElementById('topup-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const wa = document.getElementById('wa').value;
+            const us = document.getElementById('us').value;
+            const pw = document.getElementById('pw').value;
+            const catatan = document.getElementById('catatan').value;
+            const quantity = quantityInput.value;
+            const harga = hargaInput.value;
+
+            if (!selectedItem) {
+                alert('Pilih item terlebih dahulu.');
+                return;
+            }
+
+            const orderData = {
+                wa,
+                us,
+                pw,
+                catatan,
+                item: selectedItem,
+                quantity,
+                harga
+            };
+
+            console.log('Order data:', orderData);
+
+            const modal = document.getElementById('order-modal');
+            modal.style.display = 'flex';
+
+            form.reset();
+            items.forEach(i => i.classList.remove('selected'));
+            selectedItem = null;
+            selectedPrice = 0;
+            hargaInput.value = '';
             promoDetail.style.display = 'none';
-            showModal('promoModalFailed');
-        }
-    } else {
-        promoDetail.style.display = 'none';
-        showModal('promoModalFailed');
-    }
-}
+        });
 
-function updatePrice() {
-    const selectedItem = document.querySelector('.catalog-item.selected');
-    if (!selectedItem) return;
+        const closeModalButton = document.getElementById('close-modal');
+        closeModalButton.addEventListener('click', function() {
+            const modal = document.getElementById('order-modal');
+            modal.style.display = 'none';
+        });
 
-    let harga = parseInt(selectedItem.getAttribute('data-price'), 10) * parseInt(document.getElementById('quantity').value, 10);
-    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
-    const promoDetail = document.getElementById('promo-detail');
-
-    if (promoCodes[kodePromo]) {
-        let discount = promoCodes[kodePromo].discount * harga;
-        if (promoCodes[kodePromo].maxDiscount) {
-            discount = Math.min(discount, promoCodes[kodePromo].maxDiscount);
-        }
-        if (harga >= (promoCodes[kodePromo].minPrice || 0)) {
-            harga -= discount;
-            promoDetail.style.display = 'block';
-            promoDetail.innerHTML = `Kode promo "${kodePromo}" berhasil digunakan.<br> Anda mendapat diskon sebesar: Rp${discount.toLocaleString()}<br>`;
-        } else {
-            promoDetail.style.display = 'none';
-        }
-    } else {
-        promoDetail.style.display = 'none';
-    }
-
-    document.getElementById('harga').value = `Rp${harga.toLocaleString()}`;
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
-}
-
-function showModal(modalId) {
-    document.getElementById(modalId).style.display = "flex";
-}
-
-function submitForm() {
-    const wa = document.getElementById('wa').value;
-    const us = document.getElementById('us').value;
-    const pw = document.getElementById('pw').value;
-    const catatan = document.getElementById('catatan').value;
-    const metodePembayaran = document.getElementById('metode-pembayaran').value;
-    const selectedItem = document.querySelector('.catalog-item.selected');
-    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
-    const quantity = document.getElementById('quantity').value;
-
-    if (!wa || !uid || !serverId || !metodePembayaran || !selectedItem) {
-        alert("Mohon lengkapi semua kolom yang wajib diisi.");
-        return;
-    }
-
-    const jumlahDiamond = selectedItem.getAttribute('data-value');
-    const harga = document.getElementById('harga').value;
-
-    const formData = new FormData();
-    formData.append('entry.177055379', wa);
-    formData.append('entry.856223996', us);
-    formData.append('entry.261867106', pw);
-    formData.append('entry.2031588791', catatan);
-    formData.append('entry.632391313', jumlahDiamond);
-    formData.append('entry.687737506', harga);
-    formData.append('entry.1633951424', kodePromo);
-    formData.append('entry.173115270', metodePembayaran);
-    formData.append('entry.1471239423', quantity);
-
-    fetch('https://docs.google.com/forms/u/0/d/e/1FAIpQLScKjZPRaQibRMxlqgrTy6qsFC8J61oVQsgSe_m_tyLcZMiA7Q/formResponse', {
-        method: 'POST',
-        body: formData,
-        mode: 'no-cors'
-    })
-    .then(() => {
-        showModal('submitModalSuccess');
-        document.getElementById('topup-form').reset();
-        document.getElementById('harga').value = "";
-        document.getElementById('promo-detail').style.display = 'none';
-    })
-    .catch(() => {
-        showModal('submitModalFailed');
+        window.onclick = function(event) {
+            const modal = document.getElementById('order-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
     });
-}
-
-// Initialize price on page load
-updatePrice();
 </script>
+</body>
+</html>
