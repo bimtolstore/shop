@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        .login-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+        .login-container input[type="text"], 
+        .login-container input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            -webkit-user-select: text; /* Safari */
+            -moz-user-select: text; /* Firefox */
+            -ms-user-select: text; /* IE10+/Edge */
+            user-select: text; /* Standard */
+        }
+        .password-container {
+            position: relative;
+            width: calc(100% - 20px);
+            margin: 10px auto;
+        }
+        .password-container input {
+            width: 100%;
+            padding-right: 40px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #888;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        .login-container input[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            background-color: #5c6bc0;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        .login-container input[type="submit"]:hover {
+            background-color: #3949ab;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .lockout-message {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5); 
+            justify-content: center;
+            align-items: center;
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            text-align: center;
+            -webkit-user-select: text; /* Safari */
+            -moz-user-select: text; /* Firefox */
+            -ms-user-select: text; /* IE10+/Edge */
+            user-select: text; /* Standard */
+        }
+        .modal-content h2 {
+            color: #5c6bc0;
+            margin-bottom: 20px;
+        }
+        .modal-content p {
+            font-size: 18px;
+            color: #333;
+        }
+        .close-btn {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .close-btn:hover {
+            background-color: #3949ab;
+        }
+        .error-modal .modal-content {
+            border: 1px solid red;
+        }
+        .error-modal .modal-content h2,
+        .error-modal .modal-content p {
+            color: red;
+        }
+        .error-modal .close-btn {
+            background-color: red;
+        }
+        .error-modal .close-btn:hover {
+            background-color: darkred;
+        }
+        .register-link, .forgot-password-link {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        .register-link a, .forgot-password-link a {
+            color: #5c6bc0;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .register-link a:hover, .forgot-password-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login Akun @BiStore</h2>
+    <form id="loginForm" onsubmit="return validateLogin()">
+        <input type="text" id="username" placeholder="Username" required>
+        <div class="password-container">
+            <input type="password" id="password" placeholder="Password" required>
+            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
+        </div>
+        <input type="submit" value="Login">
+        <div class="error" id="errorMessage"></div>
+        <div class="lockout-message" id="lockoutMessage"></div>
+    </form>
+    <div class="forgot-password-link">Lupa sandi?
+        <a href="http://telegram.me/BiStore1_bot"><u>klik disini</u></a> untuk mengganti sandi
+    </div>
+    <div class="register-link">
+        Belum punya akun? Yukk <a href="https://telegram.me/BiStore" target="_blank"><u>daftar</u></a> dulu!!
+    </div>
+</div>
+
+<!-- Modal Sukses -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <h2 id="successModalTitle">Login Berhasil!!</h2>
+        <p id="successModalMessage">Selamat datang! Anda telah berhasil login ke akun @BiStore!</p>
+        <button class="close-btn" onclick="closeModal('successModal')">OK</button>
+    </div>
+</div>
+
+<!-- Modal Gagal -->
+<div id="errorModal" class="modal error-modal">
+    <div class="modal-content">
+        <h2>Login Gagal!!</h2>
+        <p>Username atau password salah!! Silakan coba lagi!!</p>
+        <button class="close-btn" onclick="closeModal('errorModal')">OK</button>
+    </div>
+</div>
+
+<script>
+    const users = [
+        { username: "Chianna", password: "sipendek123", redirect: "membership_chianna.html" },
+        { username: "user1", password: "123456", redirect: "membership_user1.html" },
+        { username: "HuTao", password: "WhoTao22", redirect: "membership_user1.html" },
+        { username: "Nahidaa", password: "Nahida_imoet00", redirect: "membership_user1.html" },
+        { username: "HuFuNa62", password: "HfN71Kpq2", redirect: "membership_user1.html" },
+        
+    ];
+    let failedAttempts = 0;
+    let lockout = false;
+
+    const lockoutMessage = document.getElementById('lockoutMessage');
+    const lockoutEndTimeKey = 'lockoutEndTime';
+    const lockoutDuration = 180000;
+
+    window.onload = () => {
+        const lockoutEndTime = localStorage.getItem(lockoutEndTimeKey);
+        if (lockoutEndTime) {
+            const remainingTime = new Date(lockoutEndTime) - new Date();
+            if (remainingTime > 0) {
+                lockout = true;
+                startCountdown(remainingTime);
+            } else {
+                localStorage.removeItem(lockoutEndTimeKey);
+            }
+        }
+    };
+
+    function validateLogin() {
+        if (lockout) {
+            showErrorMessage("Anda saat ini terkunci untuk login!");
+            return false;
+        }
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const user = users.find(user => user.username === username && user.password === password);
+
+        if (user) {
+            const userInfo = {
+                username: username,
+                loggedIn: true
+            };
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+            showModal('successModal', user.redirect, user.username);
+        } else {
+            failedAttempts++;
+            if (failedAttempts >= 3) {
+                lockout = true;
+                const lockoutEndTime = new Date(new Date().getTime() + lockoutDuration);
+                localStorage.setItem(lockoutEndTimeKey, lockoutEndTime);
+                startCountdown(lockoutDuration);
+                showErrorMessage("Terlalu banyak percobaan yang salah, Anda saat ini terkunci untuk login!");
+            } else {
+                showErrorMessage("Username atau password salah");
+            }
+            showModal('errorModal');
+        }
+        return false;
+    }
+
+    function togglePasswordVisibility() {
+        const passwordField = document.getElementById('password');
+        const passwordIcon = document.querySelector('.toggle-password');
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = "password";
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+        }
+    }
+
+    function showErrorMessage(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = message;
+    }
+
+    function startCountdown(duration) {
+        const endTime = new Date().getTime() + duration;
+        updateCountdown(endTime);
+
+        const countdownInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const remainingTime = endTime - now;
+
+            if (remainingTime <= 0) {
+                clearInterval(countdownInterval);
+                lockout = false;
+                failedAttempts = 0;
+                lockoutMessage.textContent = '';
+                localStorage.removeItem(lockoutEndTimeKey);
+            } else {
+                updateCountdown(endTime);
+            }
+        }, 1000);
+    }
+
+    function updateCountdown(endTime) {
+        const now = new Date().getTime();
+        const remainingTime = endTime - now;
+        const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+        lockoutMessage.textContent = `Silahkan tunggu ${minutes} menit ${seconds} detik sebelum mencoba lagi`;
+    }
+
+    function showModal(modalId, redirectUrl = null, username = '') {
+        const modal = document.getElementById(modalId);
+        modal.style.display = "flex";
+
+        if (modalId === 'successModal') {
+            const successTitle = document.getElementById('successModalTitle');
+            const successMessage = document.getElementById('successModalMessage');
+            successMessage.textContent = `Selamat datang ${username}! Anda telah berhasil login ke akun @BiStore!`;
+            const successBtn = modal.querySelector('.close-btn');
+            successBtn.onclick = () => {
+                closeModal(modalId);
+                if (redirectUrl) {
+                    window.location.href = redirectUrl;
+                }
+            };
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    closeModal(modalId);
+                    if (redirectUrl) {
+                        window.location.href = redirectUrl;
+                    }
+                }
+            };
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        const successModal = document.getElementById('successModal');
+        const errorModal = document.getElementById('errorModal');
+        if (event.target === successModal) {
+            closeModal('successModal');
+        } else if (event.target === errorModal) {
+            closeModal('errorModal');
+        }
+    }
+</script>
+
+</body>
+</html>
