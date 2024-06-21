@@ -240,11 +240,12 @@
                 <div class="catalog-item" data-value="jokirankgm" data-price="2700">1⭐ GM</div>
                 <div class="catalog-item" data-value="jokirankepic" data-price="3500">1⭐ Epic</div>
                 <div class="catalog-item" data-value="jokiranklegend" data-price="5000">1⭐ Legend</div>
+            </div>
         </div>
         <div class="form-group quantity-control">
-        <label for="quantity">Jumlah:</label>
-            <input type="number" id="quantity" value="1" min="1">
+            <label for="quantity">Jumlah:</label>
             <button type="button" id="decrease-quantity">-</button>
+            <input type="number" id="quantity" value="1" min="1">
             <button type="button" id="increase-quantity">+</button>
         </div>
         <div class="form-group">
@@ -255,131 +256,103 @@
             <label for="kode-promo">Kode Promo:</label>
             <div class="promo-group">
                 <input type="text" id="kode-promo" name="kode-promo">
-                <button type="button" id="cek-promo">Cek</button>
+                <button type="button" id="apply-promo">Apply</button>
             </div>
             <div id="promo-detail" class="promo-detail"></div>
         </div>
         <div class="form-group">
-            <button type="submit">Order</button>
+            <button type="submit">Pesan Sekarang</button>
         </div>
     </form>
 </div>
 
-<div id="order-modal" class="modal">
+<div id="promo-modal" class="modal">
     <div class="modal-content">
-        <p>Terima kasih! Order Anda sudah kami terima.</p>
-        <button id="close-modal">Tutup</button>
+        <h2>Promo Applied</h2>
+        <p id="promo-message"></p>
+        <button id="close-promo-modal">Close</button>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', () => {
         const items = document.querySelectorAll('.catalog-item');
-        const hargaInput = document.getElementById('harga');
         const quantityInput = document.getElementById('quantity');
-        const decreaseQuantityButton = document.getElementById('decrease-quantity');
-        const increaseQuantityButton = document.getElementById('increase-quantity');
-        const kodePromoInput = document.getElementById('kode-promo');
-        const cekPromoButton = document.getElementById('cek-promo');
+        const hargaInput = document.getElementById('harga');
+        const promoInput = document.getElementById('kode-promo');
         const promoDetail = document.getElementById('promo-detail');
+        const promoModal = document.getElementById('promo-modal');
+        const promoMessage = document.getElementById('promo-message');
+
         let selectedItem = null;
-        let selectedPrice = 0;
+        let promoDiscount = 0;
 
         items.forEach(item => {
-            item.addEventListener('click', function() {
-                items.forEach(i => i.classList.remove('selected'));
+            item.addEventListener('click', () => {
+                if (selectedItem) {
+                    selectedItem.classList.remove('selected');
+                }
                 item.classList.add('selected');
-                selectedItem = item.getAttribute('data-value');
-                selectedPrice = parseInt(item.getAttribute('data-price'), 10);
-                updateHarga();
+                selectedItem = item;
+                calculatePrice();
             });
         });
 
-        function updateHarga() {
-            const quantity = parseInt(quantityInput.value, 10);
-            const totalHarga = selectedPrice * quantity;
-            hargaInput.value = totalHarga;
-        }
-
-        decreaseQuantityButton.addEventListener('click', function() {
-            let quantity = parseInt(quantityInput.value, 10);
+        document.getElementById('decrease-quantity').addEventListener('click', () => {
+            let quantity = parseInt(quantityInput.value);
             if (quantity > 1) {
-                quantityInput.value = --quantity;
-                updateHarga();
+                quantityInput.value = quantity - 1;
+                calculatePrice();
             }
         });
 
-        increaseQuantityButton.addEventListener('click', function() {
-            let quantity = parseInt(quantityInput.value, 10);
-            quantityInput.value = ++quantity;
-            updateHarga();
+        document.getElementById('increase-quantity').addEventListener('click', () => {
+            let quantity = parseInt(quantityInput.value);
+            quantityInput.value = quantity + 1;
+            calculatePrice();
         });
 
-        cekPromoButton.addEventListener('click', function() {
-            const promoCode = kodePromoInput.value.trim().toUpperCase();
-            if (promoCode === 'DISKON10') {
-                const discount = 0.1 * parseInt(hargaInput.value, 10);
-                const newPrice = parseInt(hargaInput.value, 10) - discount;
-                hargaInput.value = newPrice;
-                promoDetail.textContent = `Kode promo diterima! Anda mendapatkan diskon 10%. Harga baru: Rp${newPrice}`;
+        document.getElementById('apply-promo').addEventListener('click', () => {
+            const promoCode = promoInput.value.trim();
+            // Apply promo logic here (e.g., validate promo code, apply discount)
+            if (promoCode === 'PROMO10') {
+                promoDiscount = 0.1; // 10% discount
                 promoDetail.style.display = 'block';
+                promoDetail.textContent = 'Promo code applied: 10% discount';
+                promoMessage.textContent = 'You have successfully applied a 10% discount!';
             } else {
-                promoDetail.textContent = 'Kode promo tidak valid!';
-                promoDetail.style.display = 'block';
+                promoDiscount = 0;
+                promoDetail.style.display = 'none';
+                promoDetail.textContent = '';
+                promoMessage.textContent = 'Invalid promo code!';
             }
+            promoModal.style.display = 'flex';
+            calculatePrice();
         });
 
-        const form = document.getElementById('topup-form');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const wa = document.getElementById('wa').value;
-            const us = document.getElementById('us').value;
-            const pw = document.getElementById('pw').value;
-            const catatan = document.getElementById('catatan').value;
-            const quantity = quantityInput.value;
-            const harga = hargaInput.value;
-
-            if (!selectedItem) {
-                alert('Pilih item terlebih dahulu.');
-                return;
-            }
-
-            const orderData = {
-                wa,
-                us,
-                pw,
-                catatan,
-                item: selectedItem,
-                quantity,
-                harga
-            };
-
-            console.log('Order data:', orderData);
-
-            const modal = document.getElementById('order-modal');
-            modal.style.display = 'flex';
-
-            form.reset();
-            items.forEach(i => i.classList.remove('selected'));
-            selectedItem = null;
-            selectedPrice = 0;
-            hargaInput.value = '';
-            promoDetail.style.display = 'none';
+        document.getElementById('close-promo-modal').addEventListener('click', () => {
+            promoModal.style.display = 'none';
         });
 
-        const closeModalButton = document.getElementById('close-modal');
-        closeModalButton.addEventListener('click', function() {
-            const modal = document.getElementById('order-modal');
-            modal.style.display = 'none';
+        document.getElementById('topup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Form submission logic here (e.g., send data to server)
+            alert('Form submitted!');
         });
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('order-modal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
+        function calculatePrice() {
+            if (selectedItem) {
+                const basePrice = parseFloat(selectedItem.getAttribute('data-price'));
+                const quantity = parseInt(quantityInput.value);
+                const totalPrice = basePrice * quantity;
+                const discountedPrice = totalPrice * (1 - promoDiscount);
+                hargaInput.value = `Rp ${discountedPrice.toFixed(2)}`;
+            } else {
+                hargaInput.value = '';
             }
-        };
+        }
     });
 </script>
+
 </body>
 </html>
