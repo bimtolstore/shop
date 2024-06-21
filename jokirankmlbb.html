@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joki MLBB</title>
+    <title>Top-up Diamond MLBB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -215,37 +215,36 @@
         </div>
     </div>
     <div class="profile-info">
-    <h2>Joki Rank MLBB</h2>
+    <h2>Top-up Diamond MLBB</h2>
     <form id="topup-form">
         <div class="form-group">
             <label for="wa">No Whatsapp:</label>
             <input type="number" id="wa" name="wa" required>
         </div>
         <div class="form-group">
-            <label for="us">Username (Moonton/Facebook/Tiktok):</label>
-            <input type="text" id="us" name="us" required>
+            <label for="uid">Username (Moonton/Facebook/Tiktok:</label>
+            <input type="text" id="uid" name="uid" required>
         </div>
         <div class="form-group">
-            <label for="pw">Password (Moonton/Facebook/Tiktok):</label>
-            <input type="text" id="pw" name="pw" required>
+            <label for="server-id">Password (Moonton/Facebook/Tiktok):</label>
+            <input type="text" id="server-id" name="server-id" required>
         </div>
         <div class="form-group">
-            <label for="catatan">Catatan & Req hero untuk penjoki:</label>
-            <input type="text" id="catatan" name="catatan" required>
+            <label for="server-id">Catatan & Req hero untuk penjoki:</label>
+            <input type="text" id="server-id" name="server-id" required>
         </div>
         <div class="form-group">
             <label for="jumlah-diamond">Pilih item:</label>
             <div id="jumlah-diamond" class="catalog">
-                <div class="catalog-item" data-value="jokirankmaster" data-price="1500">1⭐ Master</div>
-                <div class="catalog-item" data-value="jokirankgm" data-price="2700">1⭐ GM</div>
-                <div class="catalog-item" data-value="jokirankepic" data-price="3500">1⭐ Epic</div>
-                <div class="catalog-item" data-value="jokiranklegend" data-price="5000">1⭐ Legend</div>
-            </div>
+                <div class="catalog-item" data-value="jokirankmaster" data-price="2500">1⭐ Master</div>
+                <div class="catalog-item" data-value="jokirankgm" data-price="4000">1⭐ GM</div>
+                <div class="catalog-item" data-value="jokirankepic" data-price="6000">1⭐ Epic</div>
+                <div class="catalog-item" data-value="jokiranklegend" data-price="8000">1⭐ Legend</div>
         </div>
         <div class="form-group quantity-control">
-            <label for="quantity">Jumlah:</label>
-            <button type="button" id="decrease-quantity">-</button>
+        <label for="quantity">Jumlah:</label>
             <input type="number" id="quantity" value="1" min="1">
+            <button type="button" id="decrease-quantity">-</button>
             <button type="button" id="increase-quantity">+</button>
         </div>
         <div class="form-group">
@@ -256,103 +255,206 @@
             <label for="kode-promo">Kode Promo:</label>
             <div class="promo-group">
                 <input type="text" id="kode-promo" name="kode-promo">
-                <button type="button" id="apply-promo">Apply</button>
+                <button type="button" onclick="applyPromoCode()">Gunakan</button>
             </div>
             <div id="promo-detail" class="promo-detail"></div>
         </div>
         <div class="form-group">
-            <button type="submit">Pesan Sekarang</button>
+            <label for="metode-pembayaran">Metode Pembayaran:</label>
+            <select id="metode-pembayaran" name="metode-pembayaran" required>
+                <option value="">Pilih Metode Pembayaran</option>
+                <option value="ALFA">TOPUP DI ALFA GROUP</option>
+                <option value="GOPAY">TRANSFER GOPAY</option>
+                <option value="DANA">TRANSFER DANA</option>
+                <option value="OVO">TRANSFER OVO</option>
+                <option value="SPAY">TRANSFER SPAY</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="button" onclick="submitForm()">Submit</button>
         </div>
     </form>
+    <div id="promo-detail" class="promo-detail" style="display: none; margin-top: 10px; color: #28a745;"></div>
+    </div>
 </div>
 
-<div id="promo-modal" class="modal">
+<!-- Modal Success -->
+<div id="promoModalSuccess" class="modal">
     <div class="modal-content">
-        <h2>Promo Applied</h2>
-        <p id="promo-message"></p>
-        <button id="close-promo-modal">Close</button>
+        <p>Promo berhasil digunakan!</p>
+        <button onclick="closeModal('promoModalSuccess')">OK</button>
+    </div>
+</div>
+
+<!-- Modal Failed -->
+<div id="promoModalFailed" class="modal">
+    <div class="modal-content">
+        <p>Kode promo tidak valid atau harga tidak memenuhi syarat minimum.</p>
+        <button onclick="closeModal('promoModalFailed')">OK</button>
+    </div>
+</div>
+
+<!-- Modal Submit Success -->
+<div id="submitModalSuccess" class="modal">
+    <div class="modal-content">
+        <p>Form berhasil dikirim!</p>
+        <button onclick="closeModal('submitModalSuccess')">OK</button>
+    </div>
+</div>
+
+<!-- Modal Submit Failed -->
+<div id="submitModalFailed" class="modal">
+    <div class="modal-content">
+        <p>Gagal mengirim form, silahkan coba lagi.</p>
+        <button onclick="closeModal('submitModalFailed')">OK</button>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const items = document.querySelectorAll('.catalog-item');
-        const quantityInput = document.getElementById('quantity');
-        const hargaInput = document.getElementById('harga');
-        const promoInput = document.getElementById('kode-promo');
-        const promoDetail = document.getElementById('promo-detail');
-        const promoModal = document.getElementById('promo-modal');
-        const promoMessage = document.getElementById('promo-message');
+    const promoCodes = {
+    'SKAYJAGO': { discount: 0.40, minPrice: 100000, maxDiscount: 50000 },
+    'RAMAANAKABIDIN': { discount: 0.20, maxDiscount: 50000 }
+};
 
-        let selectedItem = null;
-        let promoDiscount = 0;
-
-        items.forEach(item => {
-            item.addEventListener('click', () => {
-                if (selectedItem) {
-                    selectedItem.classList.remove('selected');
-                }
-                item.classList.add('selected');
-                selectedItem = item;
-                calculatePrice();
-            });
-        });
-
-        document.getElementById('decrease-quantity').addEventListener('click', () => {
-            let quantity = parseInt(quantityInput.value);
-            if (quantity > 1) {
-                quantityInput.value = quantity - 1;
-                calculatePrice();
-            }
-        });
-
-        document.getElementById('increase-quantity').addEventListener('click', () => {
-            let quantity = parseInt(quantityInput.value);
-            quantityInput.value = quantity + 1;
-            calculatePrice();
-        });
-
-        document.getElementById('apply-promo').addEventListener('click', () => {
-            const promoCode = promoInput.value.trim();
-            // Apply promo logic here (e.g., validate promo code, apply discount)
-            if (promoCode === 'PROMO10') {
-                promoDiscount = 0.1; // 10% discount
-                promoDetail.style.display = 'block';
-                promoDetail.textContent = 'Promo code applied: 10% discount';
-                promoMessage.textContent = 'You have successfully applied a 10% discount!';
-            } else {
-                promoDiscount = 0;
-                promoDetail.style.display = 'none';
-                promoDetail.textContent = '';
-                promoMessage.textContent = 'Invalid promo code!';
-            }
-            promoModal.style.display = 'flex';
-            calculatePrice();
-        });
-
-        document.getElementById('close-promo-modal').addEventListener('click', () => {
-            promoModal.style.display = 'none';
-        });
-
-        document.getElementById('topup-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Form submission logic here (e.g., send data to server)
-            alert('Form submitted!');
-        });
-
-        function calculatePrice() {
-            if (selectedItem) {
-                const basePrice = parseFloat(selectedItem.getAttribute('data-price'));
-                const quantity = parseInt(quantityInput.value);
-                const totalPrice = basePrice * quantity;
-                const discountedPrice = totalPrice * (1 - promoDiscount);
-                hargaInput.value = `Rp ${discountedPrice.toFixed(2)}`;
-            } else {
-                hargaInput.value = '';
-            }
-        }
+const catalogItems = document.querySelectorAll('.catalog-item');
+catalogItems.forEach(item => {
+    item.addEventListener('click', function() {
+        catalogItems.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+        updatePrice();
     });
-</script>
+});
 
-</body>
-</html>
+document.getElementById('increase-quantity').addEventListener('click', () => {
+    const quantityInput = document.getElementById('quantity');
+    quantityInput.value = parseInt(quantityInput.value) + 1;
+    updatePrice();
+});
+
+document.getElementById('decrease-quantity').addEventListener('click', () => {
+    const quantityInput = document.getElementById('quantity');
+    if (quantityInput.value > 1) {
+        quantityInput.value = parseInt(quantityInput.value) - 1;
+        updatePrice();
+    }
+});
+
+document.getElementById('quantity').addEventListener('change', () => {
+    if (document.getElementById('quantity').value < 1) {
+        document.getElementById('quantity').value = 1;
+    }
+    updatePrice();
+});
+
+document.getElementById('kode-promo').addEventListener('input', () => {
+    updatePrice();
+});
+
+function applyPromoCode() {
+    const selectedItem = document.querySelector('.catalog-item.selected');
+    if (!selectedItem) return;
+
+    let harga = parseInt(selectedItem.getAttribute('data-price'), 10) * parseInt(document.getElementById('quantity').value, 10);
+    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
+    const promoDetail = document.getElementById('promo-detail');
+
+    if (promoCodes[kodePromo]) {
+        let discount = promoCodes[kodePromo].discount * harga;
+        if (promoCodes[kodePromo].maxDiscount) {
+            discount = Math.min(discount, promoCodes[kodePromo].maxDiscount);
+        }
+        if (harga >= (promoCodes[kodePromo].minPrice || 0)) {
+            harga -= discount;
+            promoDetail.style.display = 'block';
+            promoDetail.innerHTML = `Kode promo "${kodePromo}" berhasil digunakan.<br> Anda mendapat diskon sebesar: Rp${discount.toLocaleString()}<br>`;
+            showModal('promoModalSuccess');
+            document.getElementById('harga').value = `Rp${harga.toLocaleString()}`;
+        } else {
+            promoDetail.style.display = 'none';
+            showModal('promoModalFailed');
+        }
+    } else {
+        promoDetail.style.display = 'none';
+        showModal('promoModalFailed');
+    }
+}
+
+function updatePrice() {
+    const selectedItem = document.querySelector('.catalog-item.selected');
+    if (!selectedItem) return;
+
+    let harga = parseInt(selectedItem.getAttribute('data-price'), 10) * parseInt(document.getElementById('quantity').value, 10);
+    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
+    const promoDetail = document.getElementById('promo-detail');
+
+    if (promoCodes[kodePromo]) {
+        let discount = promoCodes[kodePromo].discount * harga;
+        if (promoCodes[kodePromo].maxDiscount) {
+            discount = Math.min(discount, promoCodes[kodePromo].maxDiscount);
+        }
+        if (harga >= (promoCodes[kodePromo].minPrice || 0)) {
+            harga -= discount;
+            promoDetail.style.display = 'block';
+            promoDetail.innerHTML = `Kode promo "${kodePromo}" berhasil digunakan.<br> Anda mendapat diskon sebesar: Rp${discount.toLocaleString()}<br>`;
+        } else {
+            promoDetail.style.display = 'none';
+        }
+    } else {
+        promoDetail.style.display = 'none';
+    }
+
+    document.getElementById('harga').value = `Rp${harga.toLocaleString()}`;
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+function showModal(modalId) {
+    document.getElementById(modalId).style.display = "flex";
+}
+
+function submitForm() {
+    const wa = document.getElementById('wa').value;
+    const uid = document.getElementById('uid').value;
+    const serverId = document.getElementById('server-id').value;
+    const metodePembayaran = document.getElementById('metode-pembayaran').value;
+    const selectedItem = document.querySelector('.catalog-item.selected');
+    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
+
+    if (!wa || !uid || !serverId || !metodePembayaran || !selectedItem) {
+        alert("Mohon lengkapi semua kolom yang wajib diisi.");
+        return;
+    }
+
+    const jumlahDiamond = selectedItem.getAttribute('data-value');
+    const harga = document.getElementById('harga').value;
+
+    const formData = new FormData();
+    formData.append('entry.217510802', wa);
+    formData.append('entry.1512889683', uid);
+    formData.append('entry.2028559523', serverId);
+    formData.append('entry.1287192687', jumlahDiamond);
+    formData.append('entry.143856495', harga);
+    formData.append('entry.1461239328', kodePromo);
+    formData.append('entry.1590851203', metodePembayaran);
+
+    fetch('https://docs.google.com/forms/u/0/d/e/1FAIpQLSfI_S5ds35glGuOxVOnPT8rIzSfFA9fLNAZjUdxBgpZPA7t_A/formResponse', {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+    })
+    .then(() => {
+        showModal('submitModalSuccess');
+        document.getElementById('topup-form').reset();
+        document.getElementById('harga').value = "";
+        document.getElementById('promo-detail').style.display = 'none';
+    })
+    .catch(() => {
+        showModal('submitModalFailed');
+    });
+}
+
+// Initialize price on page load
+updatePrice();
+</script>
