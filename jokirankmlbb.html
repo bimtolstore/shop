@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joki MLBB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+        .header .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .catalog {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .catalog-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .catalog-item.selected {
+            border-color: #007bff;
+            background-color: #e7f3ff;
+        }
+        .promo-group {
+            display: flex;
+            gap: 10px;
+        }
+        .promo-group input {
+            flex: 1;
+        }
+        .promo-group button {
+            flex: 0;
+            background-color: #28a745;
+            border: none;
+            padding: 10px;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .promo-group button:hover {
+            background-color: #218838;
+        }
+        .promo-detail {
+            margin-top: 10px;
+            color: #28a745;
+            font-size: 14px;
+            display: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .modal-content button {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+        .profile-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            text-align: left;
+            position: relative;
+        }
+        .profile-info h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #5c6bc0;
+        }
+        .profile-info p {
+            font-size: 16px;
+            color: #666;
+            margin: 10px 0;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-control button {
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #f0f2f5;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        .quantity-control button:hover {
+            background-color: #e0e0e0;
+        }
+        .quantity-control input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1></h1>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+    <div class="profile-info">
+    <h2>Joki Rank MLBB</h2>
+    <form id="topup-form">
+        <div class="form-group">
+            <label for="wa">No Whatsapp:</label>
+            <input type="number" id="wa" name="wa" required>
+        </div>
+        <div class="form-group">
+            <label for="us">Username (Moonton/Facebook/Tiktok:</label>
+            <input type="text" id="us" name="us" required>
+        </div>
+        <div class="form-group">
+            <label for="pw">Password (Moonton/Facebook/Tiktok):</label>
+            <input type="text" id="pw" name="pw" required>
+        </div>
+        <div class="form-group">
+            <label for="catatan">Catatan & Req hero untuk penjoki:</label>
+            <input type="text" id="catatan" name="catatan" required>
+        </div>
+        <div class="form-group">
+            <label for="jumlah-diamond">Pilih item:</label>
+            <div id="jumlah-diamond" class="catalog">
+                <div class="catalog-item" data-value="jokirankmaster" data-price="1500">1⭐ Master</div>
+                <div class="catalog-item" data-value="jokirankgm" data-price="2700">1⭐ GM</div>
+                <div class="catalog-item" data-value="jokirankepic" data-price="3500">1⭐ Epic</div>
+                <div class="catalog-item" data-value="jokiranklegend" data-price="5000">1⭐ Legend</div>
+        </div>
+        <div class="form-group quantity-control">
+        <label for="quantity">Jumlah:</label>
+            <input type="number" id="quantity" value="1" min="1">
+            <button type="button" id="decrease-quantity">-</button>
+            <button type="button" id="increase-quantity">+</button>
+        </div>
+        <div class="form-group">
+            <label for="harga">Harga:</label>
+            <input type="text" id="harga" name="harga" readonly required>
+        </div>
+        <div class="form-group">
+            <label for="kode-promo">Kode Promo:</label>
+            <div class="promo-group">
+                <input type="text" id="kode-promo" name="kode-promo">
+                <button type="button" onclick="applyPromoCode()">Gunakan</button>
+            </div>
+            <div id="promo-detail" class="promo-detail"></div>
+        </div>
+        <div class="form-group">
+            <label for="metode-pembayaran">Metode Pembayaran:</label>
+            <select id="metode-pembayaran" name="metode-pembayaran" required>
+                <option value="">Pilih Metode Pembayaran</option>
+                <option value="qris">Qris (Manual)</option>
+                <option value="ALFA">TOPUP DI ALFA GROUP</option>
+                <option value="GOPAY">TRANSFER GOPAY</option>
+                <option value="DANA">TRANSFER DANA</option>
+                <option value="OVO">TRANSFER OVO</option>
+                <option value="SPAY">TRANSFER SPAY</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="button" onclick="submitForm()">Submit</button>
+        </div>
+    </form>
+    <div id="promo-detail" class="promo-detail" style="display: none; margin-top: 10px; color: #28a745;"></div>
+    </div>
+</div>
+
+<div id="promoModalSuccess" class="modal">
+    <div class="modal-content">
+        <p>Promo berhasil digunakan!</p>
+        <button onclick="closeModal('promoModalSuccess')">OKAY</button>
+    </div>
+</div>
+
+<!-- Modal Failed -->
+<div id="promoModalFailed" class="modal">
+    <div class="modal-content">
+        <p>Kode promo tidak valid atau harga tidak memenuhi syarat minimum.</p>
+        <button onclick="closeModal('promoModalFailed')">OKAY</button>
+    </div>
+</div>
+
+<!-- Modal Submit Success -->
+<div id="submitModalSuccess" class="modal">
+    <div class="modal-content">
+        <p>Berhasil Mengirimkan ke database kami!! Silahkan tunggu WhatsApp dari admin untuk melanjutkan pembayaran!!</p>
+        <button onclick="closeModal('submitModalSuccess')">OKAY</button>
+    </div>
+</div>
+
+<!-- Modal Submit Failed -->
+<div id="submitModalFailed" class="modal">
+    <div class="modal-content">
+        <p>Gagal mengirim form, silahkan coba lagi.</p>
+        <button onclick="closeModal('submitModalFailed')">OKAY</button>
+    </div>
+</div>
+
+<script>
+
+    const promoCodes = {
+    'AKHIRSEASON': { discount: 0.35, minPrice: 10000, maxDiscount: 50000 },
+    'SKAYJAGO': { discount: 0.20, minPrive: 10000000, maxDiscount: 50000 }
+};
+
+const catalogItems = document.querySelectorAll('.catalog-item');
+catalogItems.forEach(item => {
+    item.addEventListener('click', function() {
+        catalogItems.forEach(i => i.classList.remove('selected'));
+        this.classList.add('selected');
+        updatePrice();
+    });
+});
+
+document.getElementById('increase-quantity').addEventListener('click', () => {
+    const quantityInput = document.getElementById('quantity');
+    quantityInput.value = parseInt(quantityInput.value) + 1;
+    updatePrice();
+});
+
+document.getElementById('decrease-quantity').addEventListener('click', () => {
+    const quantityInput = document.getElementById('quantity');
+    if (quantityInput.value > 1) {
+        quantityInput.value = parseInt(quantityInput.value) - 1;
+        updatePrice();
+    }
+});
+
+document.getElementById('quantity').addEventListener('change', () => {
+    if (document.getElementById('quantity').value < 1) {
+        document.getElementById('quantity').value = 1;
+    }
+    updatePrice();
+});
+
+document.getElementById('kode-promo').addEventListener('input', () => {
+    updatePrice();
+});
+
+function applyPromoCode() {
+    const selectedItem = document.querySelector('.catalog-item.selected');
+    if (!selectedItem) return;
+
+    let harga = parseInt(selectedItem.getAttribute('data-price'), 10) * parseInt(document.getElementById('quantity').value, 10);
+    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
+    const promoDetail = document.getElementById('promo-detail');
+
+    if (promoCodes[kodePromo]) {
+        let discount = promoCodes[kodePromo].discount * harga;
+        if (promoCodes[kodePromo].maxDiscount) {
+            discount = Math.min(discount, promoCodes[kodePromo].maxDiscount);
+        }
+        if (harga >= (promoCodes[kodePromo].minPrice || 0)) {
+            harga -= discount;
+            promoDetail.style.display = 'block';
+            promoDetail.innerHTML = `Kode promo "${kodePromo}" berhasil digunakan.<br> Anda mendapat diskon sebesar: Rp${discount.toLocaleString()}<br>`;
+            showModal('promoModalSuccess');
+            document.getElementById('harga').value = `Rp${harga.toLocaleString()}`;
+        } else {
+            promoDetail.style.display = 'none';
+            showModal('promoModalFailed');
+        }
+    } else {
+        promoDetail.style.display = 'none';
+        showModal('promoModalFailed');
+    }
+}
+
+function updatePrice() {
+    const selectedItem = document.querySelector('.catalog-item.selected');
+    if (!selectedItem) return;
+
+    let harga = parseInt(selectedItem.getAttribute('data-price'), 10) * parseInt(document.getElementById('quantity').value, 10);
+    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
+    const promoDetail = document.getElementById('promo-detail');
+
+    if (promoCodes[kodePromo]) {
+        let discount = promoCodes[kodePromo].discount * harga;
+        if (promoCodes[kodePromo].maxDiscount) {
+            discount = Math.min(discount, promoCodes[kodePromo].maxDiscount);
+        }
+        if (harga >= (promoCodes[kodePromo].minPrice || 0)) {
+            harga -= discount;
+            promoDetail.style.display = 'block';
+            promoDetail.innerHTML = `Kode promo "${kodePromo}" berhasil digunakan.<br> Anda mendapat diskon sebesar: Rp${discount.toLocaleString()}<br>`;
+        } else {
+            promoDetail.style.display = 'none';
+        }
+    } else {
+        promoDetail.style.display = 'none';
+    }
+
+    document.getElementById('harga').value = `Rp${harga.toLocaleString()}`;
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+function showModal(modalId) {
+    document.getElementById(modalId).style.display = "flex";
+}
+
+function submitForm() {
+    const wa = document.getElementById('wa').value;
+    const us = document.getElementById('us').value;
+    const pw = document.getElementById('pw').value;
+    const catatan = document.getElementById('catatan').value;
+    const metodePembayaran = document.getElementById('metode-pembayaran').value;
+    const selectedItem = document.querySelector('.catalog-item.selected');
+    const kodePromo = document.getElementById('kode-promo').value.toUpperCase();
+    const quantity = document.getElementById('quantity').value;
+
+    if (!wa || !uid || !serverId || !metodePembayaran || !selectedItem) {
+        alert("Mohon lengkapi semua kolom yang wajib diisi.");
+        return;
+    }
+
+    const jumlahDiamond = selectedItem.getAttribute('data-value');
+    const harga = document.getElementById('harga').value;
+
+    const formData = new FormData();
+    formData.append('entry.177055379', wa);
+    formData.append('entry.856223996', us);
+    formData.append('entry.261867106', pw);
+    formData.append('entry.2031588791', catatan);
+    formData.append('entry.632391313', jumlahDiamond);
+    formData.append('entry.687737506', harga);
+    formData.append('entry.1633951424', kodePromo);
+    formData.append('entry.173115270', metodePembayaran);
+    formData.append('entry.1471239423', quantity);
+
+    fetch('https://docs.google.com/forms/u/0/d/e/1FAIpQLScKjZPRaQibRMxlqgrTy6qsFC8J61oVQsgSe_m_tyLcZMiA7Q/formResponse', {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+    })
+    .then(() => {
+        showModal('submitModalSuccess');
+        document.getElementById('topup-form').reset();
+        document.getElementById('harga').value = "";
+        document.getElementById('promo-detail').style.display = 'none';
+    })
+    .catch(() => {
+        showModal('submitModalFailed');
+    });
+}
+
+// Initialize price on page load
+updatePrice();
+</script>

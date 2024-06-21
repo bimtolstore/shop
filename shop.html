@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            user-select: none; /* Disable text selection */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #5c6bc0;
+            text-decoration: none;
+        }
+        .header .menu-toggle {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .menu-item {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            width: 200px; /* Lebar tetap */
+            height: 200px; /* Tinggi tetap */
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .menu-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+        .menu-item i {
+            font-size: 48px;
+            color: #5c6bc0;
+        }
+        .menu-item h3 {
+            margin: 10px 0;
+            font-size: 24px;
+            color: #333;
+        }
+        .menu-item p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .menu-item .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background: #5c6bc0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .menu-item .btn:hover {
+            background: #3949ab;
+        }
+        .customer-service {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #5c6bc0;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+        .customer-service:hover {
+            background: #3949ab;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+        }
+        .modal-content p {
+            color: #666;
+            font-size: 16px;
+        }
+        .modal-content .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .modal-content .btn {
+            padding: 10px 20px;
+            color: #fff;
+            background: #5c6bc0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .modal-content .btn:hover {
+            background: #3949ab;
+        }
+        .modal-content .btn.cancel {
+            background: #f44336;
+        }
+        .modal-content .btn.cancel:hover {
+            background: #d32f2f;
+        }
+        /* Prevent right-click on images */
+        img {
+            pointer-events: none;
+        }
+        .ikon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <a class="logo">BiStore</a>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </div>
+    <div class="menu">
+        <div class="menu-item">
+            <img src="https://img.utdstc.com/icon/78d/66f/78d66ff1ab1bd23f7fd6d9cdb93854881cb8f0b69e8a301faaf4f4eab058d19e:200" alt="mlbb" class="ikon"></img>
+            <h3>Mobile Legends</h3>
+            <p>Topup dan Joki Mobile Legends!</p>
+            <a href="mlbb.html" class="btn">Buka</a>
+        </div>
+    <div class="menu">
+        <div class="menu-item">
+            <img src="https://img.utdstc.com/icon/4d1/b37/4d1b37eb5bc4e9e64c5b840330d3c494a6f441b8db889b8bf957436e9793056e:200" alt="gi" class="ikon"></img>
+            <h3>Genshin Impact</h3>
+            <p>Topup dan Joki Genshin Impact!</p>
+            <a href="gi.html" class="btn">Buka</a>
+        </div>
+        <div class="menu-item">
+            <img src="https://img.utdstc.com/icon/e88/cfe/e88cfe8fcdef90b523f109cacbf14421b821df325c9427fc731d64a54ecf9ebc:200" alt="ff" class="ikon"></img>
+            <h3>Free Fire</h3>
+            <p>Topup Diamond & Item Free Fire!</p>
+            <a href="ff.html" class="btn">Buka</a>
+        </div>
+    </div>
+</div>
+
+<!-- Logo Customer Service -->
+<a href="https://wa.me/6285716518538" class="customer-service">
+    <i class="fas fa-headset"></i>
+</a>
+
+<script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const menu = document.querySelector('.menu');
+
+    menuToggle.addEventListener('click', () => {
+        menu.classList.toggle('show-menu');
+    });
+
+    // Logout confirmation modal
+    const logoutBtn = document.querySelector('.logout-btn');
+    const modal = document.getElementById('logoutModal');
+    const cancelBtn = document.querySelector('.modal-content .btn.cancel');
+
+    logoutBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        modal.style.display = 'flex';
+    });
+
+    cancelBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        modal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Prevent text copy
+    document.addEventListener('copy', (event) => {
+        event.preventDefault();
+    });
+
+    // Prevent right-click
+    document.addEventListener('contextmenu', (event) => {
+        event.preventDefault();
+    });
+
+    // Prevent specific keyboard shortcuts for copying
+    document.addEventListener('keydown', (event) => {
+        // Check for Ctrl+C, Ctrl+X, and Ctrl+U (view source)
+        if (event.ctrlKey && (event.key === 'c' || event.key === 'x' || event.key === 'u')) {
+            event.preventDefault();
+        }
+        // Check for Command+C, Command+X, and Command+U on Mac
+        if (event.metaKey && (event.key === 'c' || event.key === 'x' || event.key === 'u')) {
+            event.preventDefault();
+        }
+    });
+</script>
+
+</body>
+</html>
