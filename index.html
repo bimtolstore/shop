@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bimtolstore - Topup & Joki</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --card-bg: #1e293b;
+            --input-bg: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f1f5f9;
+            --card-bg: #ffffff;
+            --input-bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding-top: 80px; transition: 0.3s; }
+        .container { max-width: 480px; margin: auto; padding: 0 20px; }
+
+        /* NAVBAR */
+        header {
+            background: var(--card-bg); padding: 0 20px; position: fixed; top: 0; left: 0; width: 100%; height: 70px;
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 1000; box-sizing: border-box;
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .header-logo { width: 35px; height: 35px; border-radius: 8px; background: white; object-fit: contain; }
+
+        /* SIDEBAR */
+        .hamburger { background: none; border: 1px solid var(--border); padding: 8px; border-radius: 8px; cursor: pointer; }
+        .hamburger div { width: 20px; height: 2px; background: var(--primary); margin: 4px 0; }
+        .sidebar {
+            position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: var(--card-bg);
+            z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 20px; box-sizing: border-box; border-left: 1px solid var(--border);
+        }
+        .sidebar.open { right: 0; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; z-index: 1500; backdrop-filter: blur(4px); }
+        .overlay.open { display: block; }
+
+        /* GRID MENU */
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .menu-card { 
+            background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            aspect-ratio: 1/1; cursor: pointer; transition: 0.3s; text-align: center;
+        }
+        .menu-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .menu-card span { font-size: 2.5rem; margin-bottom: 10px; }
+
+        /* FORMS & COMPONENTS */
+        .page { display: none; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .input-group { background: var(--card-bg); height: 100%; padding: 25px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 15px; position: relative; }
+        
+        .btn-circle-back {
+            background: var(--bg-body); border: 1px solid var(--border); color: var(--primary);
+            width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; margin-bottom: 20px; transition: 0.3s; font-size: 1.2rem;
+        }
+        .btn-circle-back:hover { background: var(--primary); color: white; }
+
+        .qty-wrapper { display: flex; align-items: center; gap: 12px; margin: 15px 0; }
+        .qty-btn { width: 45px; height: 45px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); cursor: pointer; font-weight: bold; }
+        .qty-input { text-align: center; width: 70px !important; margin-bottom: 0 !important; font-weight: bold; font-size: 1.1rem; }
+        
+        .promo-wrapper { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-promo { background: var(--primary); color: #000; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+
+        .desc { font-size: 0.85rem; color: var(--text-muted); padding: 15px; background: rgba(0,0,0,0.15); border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--primary); line-height: 1.5; }
+        
+        input, select, textarea { width: 100%; padding: 15px; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; color: var(--text-main); margin-bottom: 15px; box-sizing: border-box; font-size: 0.95rem; }
+        input:focus { border-color: var(--primary); outline: none; }
+        
+        .btn-pay { background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; border: none; padding: 20px; width: 100%; border-radius: 18px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .btn-pay:active { transform: scale(0.97); }
+
+        .invoice-card { background: var(--card-bg); border-radius: 25px; padding: 30px; border: 1px solid var(--border); text-align: center; }
+        .invoice-id { background: var(--bg-body); padding: 12px; border-radius: 12px; font-family: monospace; color: var(--primary); margin: 20px 0; border: 1px dashed var(--border); font-size: 1rem; font-weight: bold; }
+        
+        .cs-float { position: fixed; bottom: 25px; right: 25px; background: #25d366; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-weight: 700; z-index: 999; box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <img src="icon.png" class="header-logo" alt="Logo">
+        <span class="header-title">bimtolstore</span>
+    </div>
+    <button class="hamburger" onclick="toggleSidebar()">
+        <div></div><div></div><div></div>
+    </button>
+</header>
+
+<div id="sidebar" class="sidebar">
+    <h3 data-tr="sid_settings">Pengaturan</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; padding:12px; background:var(--bg-body); border-radius:15px;">
+        <span data-tr="sid_theme">Mode Terang</span>
+        <input type="checkbox" id="theme-toggle" onchange="toggleTheme()" style="width: 20px; height: 20px; margin: 0; cursor: pointer;">
+    </div>
+    <div style="margin-bottom:25px">
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:10px;" data-tr="sid_lang">Bahasa</label>
+        <select id="lang-select" onchange="changeLang()">
+            <option value="id">Bahasa</option>
+            <option value="jv">Boso Jowo</option>
+            <option value="su">Basa Sunda</option>
+            <option value="en">English</option>
+            <option value="jp">日本語</option>
+            <option value="ph">Tagalog</option>
+            <option value="ms">Melayu</option>
+        </select>
+    </div>
+    <button class="btn-pay" onclick="toggleSidebar()" style="padding:12px" data-tr="save">Simpan</button>
+</div>
+<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+<div class="container">
+    <div id="home-page" class="page" style="display: block;">
+        <h2 style="text-align: center; font-size: 1.1rem; margin-bottom: 25px;" data-tr="home_title">Buka Setiap Hari Jam 08.00 s/d 20.00</h2>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="navTo('mlbb')"><span>💎</span><b data-tr="menu_mlbb">Diamond MLBB</b></div>
+            <div class="menu-card" onclick="navTo('joki')"><span>⚔️</span><b data-tr="menu_joki">Joki Rank MLBB</b></div>
+            <div class="menu-card" onclick="navTo('bank')"><span>🏦</span><b data-tr="menu_bank">Topup/Transfer</b></div>
+            <div class="menu-card" onclick="navTo('akun')"><span>🎮</span><b data-tr="menu_akun">Beli Akun Game</b></div>
+            <div class="menu-card" onclick="navTo('pkl')"><span>📄</span><b data-tr="menu_pkl">Jasa Laporan PKL</b></div>
+        </div>
+    </div>
+
+    <div id="mlbb-page" class="page">
+        <div class="btn-circle-back" onclick="navTo('home')">❮</div>
+        <div class="input-group">
+            <h3 data-tr="top_ml_title">TopUp Diamond MLBB</h3>
+            <div class="desc" data-tr="top_ml_desc">Topup Diamonds instan via ID & Server. Proses Max 1x24 Jam, Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB</div>
+            <input type="number" id="ml-id" placeholder="User ID" data-ph="ph_id">
+            <input type="number" id="ml-server" placeholder="Server" data-ph="ph_server">
+            <select id="ml-nominal">
+                <option value="28000">Weekly Diamond Pass - Rp28.000</option>
+                <option value="15000">Weekly Elite Bundle - Rp15.000</option>
+                <option value="75000">Monthly Epic Bundle - Rp75.000</option>
+                <option value="3000">11 Diamond - Rp3.000</option>
+                <option value="15100">53+6 Diamond - Rp15.100</option>
+                <option value="44500">154+16 Diamond - Rp44.500</option>
+                <option value="76500">256+40 Diamond - Rp76.500</option>
+                <option value="146000">503+65 Diamond - Rp146.000</option>
+            </select>
+            <label data-tr="label_qty">Jumlah</label>
+            <div class="qty-wrapper">
+                <button class="qty-btn" onclick="changeQty('ml-qty', -1)">-</button>
+                <input type="number" id="ml-qty" value="1" min="1" class="qty-input">
+                <button class="qty-btn" onclick="changeQty('ml-qty', 1)">+</button>
+            </div>
+            <label data-tr="label_promo">Kode Promo</label>
+            <div class="promo-wrapper">
+                <input type="text" id="ml-promo" placeholder="Kode Promo" data-ph="ph_promo">
+                <button class="btn-promo" onclick="applyPromo('ml-promo')" data-tr="btn_apply">Gunakan</button>
+            </div>
+        </div>
+        <button class="btn-pay" onclick="validateAndPay('MLBB', ['ml-id', 'ml-server'], 'ml-nominal', 'ml-qty', 0.05)" data-tr="btn_pay">Lanjutkan</button>
+    </div>
+
+    <div id="joki-page" class="page">
+        <div class="btn-circle-back" onclick="navTo('home')">❮</div>
+        <div class="input-group">
+            <h3 data-tr="menu_joki">Joki Rank</h3>
+            <div class="desc" data-tr="top_joki_desc">Dikerjakan oleh tim yang berkualitas. Matikan verifikasi 2 langkah sebelum memesan. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.</div>
+            <input type="text" id="jk-via" placeholder="Login Via (Moonton/FB)" data-ph="ph_login">
+            <input type="text" id="jk-user" placeholder="Email/No HP" data-ph="ph_user">
+            <input type="password" id="jk-pass" placeholder="Password" data-ph="ph_pass">
+            <select id="jk-paket">
+                <option data-tr="joki1" value="99999999">BELUM TERSEDIA</option>
+            </select>
+            <div class="qty-wrapper">
+                <button class="qty-btn" onclick="changeQty('jk-qty', -1)">-</button>
+                <input type="number" id="jk-qty" value="1" min="1" class="qty-input">
+                <button class="qty-btn" onclick="changeQty('jk-qty', 1)">+</button>
+            </div>
+            <label data-tr="label_promo">Kode Promo</label>
+            <div class="promo-wrapper">
+                <input type="text" id="jk-promo" placeholder="Kode Promo" data-ph="ph_promo">
+                <button class="btn-promo" onclick="applyPromo('jk-promo')" data-tr="btn_apply">Gunakan</button>
+            </div>
+        </div>
+        <button class="btn-pay" onclick="validateAndPay('Joki MLBB', ['jk-via', 'jk-user', 'jk-pass'], 'jk-paket', 'jk-qty', 0.04)" data-tr="btn_pay">Lanjutkan</button>
+    </div>
+
+    <div id="bank-page" class="page">
+        <div class="btn-circle-back" onclick="navTo('home')">❮</div>
+        <div class="input-group">
+            <h3 data-tr="menu_bank">Topup E-Wallet & Transfer Bank</h3>
+            <div class="desc" data-tr="top_bank_desc">Isi saldo/transfer bank praktis pajak hanya 6%. Pastikan data rekening sudah benar. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.</div>
+            <select id="bank-tujuan">
+                <option value="BRI">BRI</option>
+                <option value="BNI">BNI</option>
+                <option value="BCA">BCA</option>
+                <option value="Mandiri">Mandiri</option>
+                <option value="Sea Bank">Sea Bank</option>
+                <option value="Bank Jago">Jago</option>
+                <option value="DANA">Dana</option>
+                <option value="Gopay">Gopay</option>
+                <option value="OVO">OVO</option>
+                <option value="ShopeePay">ShopeePay</option>
+            </select>
+            <input type="text" id="bank-norek" placeholder="No Rekening / HP" data-ph="ph_norek">
+            <input type="text" id="bank-nama" placeholder="Atas Nama" data-ph="ph_an">
+            <select id="bank-nominal">
+                <option value="10000">Rp 10.000</option>
+                <option value="20000">Rp 20.000</option>
+                <option value="25000">Rp 25.000</option>
+                <option value="50000">Rp 50.000</option>
+                <option value="75000">Rp 75.000</option>
+                <option value="100000">Rp 100.000</option>
+                <option value="200000">Rp 200.000</option>
+                <option value="250000">Rp 250.000</option>
+                <option value="500000">Rp 500.000</option>
+            </select>
+            <label data-tr="label_promo">Kode Promo</label>
+            <div class="promo-wrapper">
+                <input type="text" id="bank-promo" placeholder="Kode Promo" data-ph="ph_promo">
+                <button class="btn-promo" onclick="applyPromo('bank-promo')" data-tr="btn_apply">Gunakan</button>
+            </div>
+        </div>
+        <button class="btn-pay" onclick="validateAndPay('Bank', ['bank-norek', 'bank-nama'], 'bank-nominal', null, 0.06)" data-tr="btn_pay">Lanjutkan</button>
+    </div>
+
+    <div id="akun-page" class="page">
+        <div class="btn-circle-back" onclick="navTo('home')">❮</div>
+        <div class="input-group">
+            <h3 data-tr="menu_akun">Beli Akun Game</h3>
+            <div class="desc" data-tr="top_akun_desc">Beli akun aman bergaransi. Harap isi ID katalog sesuai janji admin. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.</div>
+            <input type="text" id="ak-nama" placeholder="IDX AKUN" data-ph="ph_katalog">
+            <input type="number" id="ak-harga" placeholder="Harga Kesepakatan (Rp)" data-ph="ph_price">
+            <label data-tr="label_promo">Kode Promo</label>
+            <div class="promo-wrapper">
+                <input type="text" id="ak-promo" placeholder="Kode Promo" data-ph="ph_promo">
+                <button class="btn-promo" onclick="applyPromo('ak-promo')" data-tr="btn_apply">Gunakan</button>
+            </div>
+        </div>
+        <button class="btn-pay" onclick="validateAndPay('Akun Game', ['ak-nama', 'ak-harga'], 'ak-harga', 'ak-qty', 0.04)" data-tr="btn_pay">Lanjutkan</button>
+    </div>
+
+    <div id="pkl-page" class="page">
+        <div class="btn-circle-back" onclick="navTo('home')">❮</div>
+        <div class="input-group">
+            <h3 data-tr="menu_pkl">Jasa Laporan PKL</h3>
+            <div class="desc" data-tr="top_pkl_desc">Jasa pembuatan laporan PKL profesional. Rapi, cepat, dan bergaransi revisi 3x. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB</div>
+            <textarea id="pkl-desc" placeholder="IDX Pesanan" data-ph="ph_detail"></textarea>
+            <input type="number" id="pkl-harga" placeholder="Harga Kesepakatan (Rp)" data-ph="ph_price">
+            <label data-tr="label_promo">Kode Promo</label>
+            <div class="promo-wrapper">
+                <input type="text" id="pkl-promo" placeholder="Kode Promo" data-ph="ph_promo">
+                <button class="btn-promo" onclick="applyPromo('pkl-promo')" data-tr="btn_apply">Gunakan</button>
+            </div>
+        </div>
+        <button class="btn-pay" onclick="validateAndPay('Jasa PKL', ['pkl-desc', 'pkl-harga'], 'pkl-harga', 'pkl-qty', 0.04)" data-tr="btn_pay">Lanjutkan</button>
+    </div>
+
+    <div id="payment-page" class="page">
+        <div class="input-group">
+            <h3 data-tr="top_checkout">Rincian Bayar</h3>
+            <div id="payment-summary" style="font-size: 0.95rem; line-height: 2;"></div>
+            <input type="number" id="global-wa" placeholder="No WhatsApp (Aktif)" data-ph="ph_wa" style="margin-top:20px">
+        </div>
+        <div class="input-group" style="text-align:center">
+            <img src="qris.png" style="width:200px; border: 5px solid white; border-radius: 10px;">
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 10px;" data-tr="scan">Scan QRIS All Payment, Harap Bayar Sesuai Harga Diatas, Jika Sudah Klik Konfirmasi Bayar</p>
+        </div>
+        <button class="btn-pay" style="background:var(--success)" onclick="sendToTelegram()" data-tr="btn_confirm">Konfirmasi Bayar</button>
+    </div>
+
+    <div id="thanks-page" class="page">
+        <div class="invoice-card">
+            <h2 style="color:var(--success); margin-bottom: 10px;" data-tr="top_success">SUKSES!</h2>
+            <p data-tr="top_thanks" style="font-size: 0.9rem;">Pembayaran anda akan kami cek dan segera diproses, silahkan tunggu whatsapp dari admin</p>
+            <div id="display-order-id" class="invoice-id"></div>
+            <p style="font-size: 0.7rem; color: var(--text-muted);" data-tr="top_note">Silakan salin & simpan Order ID ini.</p>
+            <button class="btn-pay" onclick="location.reload()" style="margin-top:20px" data-tr="btn_finish">Selesai</button>
+        </div>
+    </div>
+</div>
+
+<a href="https://wa.me/6289508984455" class="cs-float" target="_blank">💬 CS</a>
+
+<script>
+    const BOT_TOKEN = "6225268550:AAHkeX_stdehJw8MGsYStPKwxvsGKAM3oeM";
+    const CHAT_ID = "1917708915";
+    let activeData = {};
+    let diskonPot = 0;
+
+    // Kamus Bahasa (Sama seperti sebelumnya)
+    const translations = {
+        id: {
+            sid_settings: "Pengaturan", sid_theme: "Mode Terang", sid_lang: "Bahasa",
+            home_title: "Buka Setiap Hari Jam 08.00 s/d 20.00", menu_mlbb: "Diamond MLBB", menu_joki: "Joki Rank MLBB", menu_bank: "Topup/Transfer", menu_akun: "Beli Akun Game", menu_pkl: "Jasa Laporan PKL",
+            top_ml_title: "TopUp Diamonds MLBB", top_ml_desc: "Topup Diamonds instan via ID & Server. Proses Max 1x24 Jam, Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB",
+            top_joki_desc: "Dikerjakan oleh tim yang berkualitas. Matikan verifikasi 2 langkah sebelum memesan. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.",
+            top_bank_desc: "Isi saldo/transfer bank praktis pajak hanya 6%. Pastikan data rekening sudah benar. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.",
+            top_akun_desc: "Beli akun aman bergaransi. Harap isi ID katalog sesuai janji admin. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.",
+            top_pkl_desc: "Jasa pembuatan laporan PKL profesional. Rapi, cepat, dan bergaransi revisi 3x. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB",
+            label_qty: "Jumlah", label_promo: "Kode Promo", btn_apply: "Gunakan", btn_pay: "Lanjutkan", btn_back: "← Kembali", scan: "Scan QRIS All Payment, Harap Bayar Sesuai Harga Diatas, Jika Sudah Klik Konfirmasi Bayar", joki1: "BELUM TERSEDIA", sid_lang: "Bahasa", save: "Simpan",
+            top_checkout: "Rincian Bayar", btn_confirm: "Konfirmasi Bayar", top_success: "SUKSES!", top_thanks: "Pembayaran anda akan kami cek dan segera diproses, silahkan tunggu whatsapp dari admin", top_note: "Silakan salin & simpan Order ID ini", btn_finish: "Selesai",
+            ph_id: "User ID", ph_server: "Server", ph_promo: "Kode Promo", ph_login: "Login Via (Moonton/FB/WhatsApp)", ph_user: "Email/No HP", ph_pass: "Password", ph_norek: "No Rekening / HP", ph_an: "Atas Nama", ph_katalog: "IDX AKUN", ph_price: "Harga Kesepakatan (Rp)", ph_detail: "IDX Pesanan", ph_wa: "WhatsApp (Aktif)",
+            alert_promo: "Diskon Rp5.000 Aktif!!", alert_promo_err: "Kode Salah!", alert_form: "Isi Semua Format!", alert_wa: "Masukkan Nomor Whatsapp!", txt_sub: "Subtotal", txt_dis: "Diskon", txt_admin: "Admin", txt_total: "TOTAL"
+        },
+        en: {
+    sid_settings: "Settings", sid_theme: "Light Mode", sid_lang: "Language",
+    home_title: "Open Daily 08:00 AM - 08:00 PM", menu_mlbb: "MLBB Diamonds", menu_joki: "Rank Boosting", menu_bank: "Topup/Transfer", menu_akun: "Game Accounts", menu_pkl: "Internship Report Service",
+    top_ml_title: "Top Up MLBB Diamonds", top_ml_desc: "Instant Diamond top-up via ID & Server. Process Max 24 Hours, Operating daily from 08:00 AM - 08:00 PM",
+    top_joki_desc: "Handled by a high-quality team. Please disable 2-step verification before ordering. Operating daily from 08:00 AM - 08:00 PM.",
+    top_bank_desc: "Practical bank transfer/top-up with only 6% fee. Ensure account details are correct. Operating daily from 08:00 AM - 08:00 PM.",
+    top_akun_desc: "Buy secure accounts with warranty. Please fill in the catalog ID as agreed with admin. Operating daily from 08:00 AM - 08:00 PM.",
+    top_pkl_desc: "Professional internship report services. Neat, fast, and 3x revision warranty. Operating daily from 08:00 AM - 08:00 PM",
+    label_qty: "Quantity", label_promo: "Promo Code", btn_apply: "Apply", btn_pay: "Continue", btn_back: "← Back", scan: "Scan QRIS All Payment, please pay the exact amount above. Once done, click Confirm Payment", joki1: "NOT AVAILABLE", sid_lang: "Language", save: "Save",
+    top_checkout: "Payment Details", btn_confirm: "Confirm Payment", top_success: "SUCCESS!", top_thanks: "Your payment will be verified and processed shortly, please wait for a WhatsApp message from our admin", top_note: "Please copy & save this Order ID", btn_finish: "Finish",
+    ph_id: "User ID", ph_server: "Server", ph_promo: "Promo Code", ph_login: "Login Via (Moonton/FB/WhatsApp)", ph_user: "Email/Phone Number", ph_pass: "Password", ph_norek: "Account / Phone Number", ph_an: "Account Holder Name", ph_katalog: "Account IDX", ph_price: "Agreed Price (Rp)", ph_detail: "Order IDX", ph_wa: "WhatsApp (Active)",
+    alert_promo: "Rp5,000 Discount Active!!", alert_promo_err: "Invalid Code!", alert_form: "Please fill all fields!", alert_wa: "Enter WhatsApp Number!", txt_sub: "Subtotal", txt_dis: "Discount", txt_admin: "Admin Fee", txt_total: "TOTAL"
+},
+        jp: {
+    sid_settings: "設定", sid_theme: "ライトモード", sid_lang: "言語",
+    home_title: "年中無休 08:00 ～ 20:00", menu_mlbb: "MLBB ダイヤ", menu_joki: "ランク代行", menu_bank: "チャージ/送金", menu_akun: "アカウント売買", menu_pkl: "インターン報告書代行",
+    top_ml_title: "MLBB ダイヤチャージ", top_ml_desc: "IDとサーバーによる即時ダイヤチャージ。最大24時間以内に完了。営業時間は毎日 08:00 ～ 20:00 です。",
+    top_joki_desc: "高品質なチームが対応します。注文前に2段階認証をオフにしてください。営業時間は毎日 08:00 ～ 20:00 です。",
+    top_bank_desc: "便利な銀行振込/チャージ、手数料わずか6%。口座情報が正しいことを確認してください。営業時間 08:00 ～ 20:00。",
+    top_akun_desc: "保証付きの安全なアカウント。管理者の指示通りにカタログIDを入力してください。営業時間 08:00 ～ 20:00。",
+    top_pkl_desc: "プロによる報告書作成代行。丁寧・迅速、3回までの修正保証。営業時間は毎日 08:00 ～ 20:00 です。",
+    label_qty: "数量", label_promo: "プロモーションコード", btn_apply: "適用", btn_pay: "次へ", btn_back: "← 戻る", scan: "QRISスキャンで支払い。上記の金額通りにお支払いください。完了後、支払い確認ボタンを押してください。", joki1: "現在利用不可", sid_lang: "言語", save: "保存",
+    top_checkout: "支払い詳細", btn_confirm: "支払いを確認", top_success: "成功！", top_thanks: "お支払いを照合し、すぐに処理いたします。管理者からのWhatsApp連絡をお待ちください。", top_note: "この注文IDをコピーして保存してください", btn_finish: "完了",
+    ph_id: "ユーザーID", ph_server: "サーバー", ph_promo: "プロモコード", ph_login: "ログイン方法 (Moonton/FB/WhatsApp)", ph_user: "メール/電話番号", ph_pass: "パスワード", ph_norek: "口座番号 / 電話番号", ph_an: "名義人", ph_katalog: "アカウントIDX", ph_price: "合意価格 (Rp)", ph_detail: "注文IDX", ph_wa: "WhatsApp (有効なもの)",
+    alert_promo: "5,000ルピア割引適用中！", alert_promo_err: "コードが無効です！", alert_form: "すべての項目を入力してください！", alert_wa: "WhatsApp番号を入力してください！", txt_sub: "小計", txt_dis: "割引", txt_admin: "手数料", txt_total: "合計"
+},
+ph: {
+    sid_settings: "Settings", sid_theme: "Light Mode", sid_lang: "Wika",
+    home_title: "Bukad Araw-araw 08:00 AM hanggang 08:00 PM", menu_mlbb: "MLBB Diamonds", menu_joki: "Rank Boosting", menu_bank: "Topup/Transfer", menu_akun: "Bumili ng Account", menu_pkl: "Internship Report Service",
+    top_ml_title: "Top Up MLBB Diamonds", top_ml_desc: "Instant Diamonds via ID & Server. Proseso Max 24 Oras, Bukas araw-araw mula 08:00 AM - 08:00 PM",
+    top_joki_desc: "Gawa ng de-kalidad na team. I-off ang 2-step verification bago mag-order. Bukas araw-araw mula 08:00 AM - 08:00 PM.",
+    top_bank_desc: "Praktikal na bank transfer/top-up, 6% lang ang fee. Siguraduhing tama ang data ng account. Bukas araw-araw mula 08:00 AM - 08:00 PM.",
+    top_akun_desc: "Bumili ng account na may warranty. Ilagay ang catalog ID ayon sa usapan sa admin. Bukas araw-araw mula 08:00 AM - 08:00 PM.",
+    top_pkl_desc: "Propesyonal na serbisyo sa paggawa ng report. Maayos, mabilis, at may 3x revision warranty. Bukas araw-araw mula 08:00 AM - 08:00 PM",
+    label_qty: "Dami", label_promo: "Promo Code", btn_apply: "Gamitin", btn_pay: "Ipagpatuloy", btn_back: "← Bumalik", scan: "I-scan ang QRIS, bayaran ang tamang halaga sa itaas. Pagkatapos, i-click ang Kumpirmahin ang Bayad", joki1: "HINDI AVAILABLE", sid_lang: "Wika",save: "I-save",
+    top_checkout: "Detalye ng Bayad", btn_confirm: "Kumpirmahin ang Bayad", top_success: "TAGUMPAY!", top_thanks: "Ibe-verify namin ang iyong bayad at ipoproseso agad, mangyaring maghintay ng WhatsApp mula sa admin", top_note: "Pakikopya at itabi ang Order ID na ito", btn_finish: "Tapos na",
+    ph_id: "User ID", ph_server: "Server", ph_promo: "Promo Code", ph_login: "Login Via (Moonton/FB/WhatsApp)", ph_user: "Email/No HP", ph_pass: "Password", ph_norek: "Account No / HP", ph_an: "Sa Pangalan ni", ph_katalog: "IDX ng Account", ph_price: "Kasunduang Presyo (Rp)", ph_detail: "IDX ng Order", ph_wa: "WhatsApp (Aktibo)",
+    alert_promo: "Discount na Rp5.000 ay Aktibo!!", alert_promo_err: "Maling Code!", alert_form: "Punan ang lahat ng format!", alert_wa: "Ipasok ang WhatsApp Number!", txt_sub: "Subtotal", txt_dis: "Discount", txt_admin: "Admin Fee", txt_total: "KABUUAN"
+},
+
+jv: {
+    sid_settings: "Setelan", sid_theme: "Mode Padhang", sid_lang: "Basa",
+    home_title: "Buka Saben Dina Jam 08.00 s/d 20.00", menu_mlbb: "Diamond MLBB", menu_joki: "Joki Rank MLBB", menu_bank: "Topup/Transfer", menu_akun: "Tuku Akun Game", menu_pkl: "Jasa Laporan PKL",
+    top_ml_title: "TopUp Diamonds MLBB", top_ml_desc: "Topup Diamonds instan nganggo ID & Server. Proses Max 1x24 Jam, Layanan diproses saben dina jam 08.00 WIB - 20.00 WIB",
+    top_joki_desc: "Digarap karo tim sing berkualitas. Pateni verifikasi 2 langkah sedurunge pesen. Layanan diproses saben dina jam 08.00 WIB - 20.00 WIB.",
+    top_bank_desc: "Isi saldo/transfer bank praktis pajek mung 6%. Pastikne data rekening wis bener. Layanan diproses saben dina jam 08.00 WIB - 20.00 WIB.",
+    top_akun_desc: "Tuku akun aman bergaransi. Mangga isi ID katalog sesuai janji admin. Layanan diproses saben dina jam 08.00 WIB - 20.00 WIB.",
+    top_pkl_desc: "Jasa nggawe laporan PKL profesional. Rapi, cepet, lan garansi revisi kaping 3. Layanan diproses saben dina jam 08.00 WIB - 20.00 WIB",
+    label_qty: "Jumlah", label_promo: "Kode Promo", btn_apply: "Gunakne", btn_pay: "Terusne", btn_back: "← Bali", scan: "Scan QRIS All Payment, Mangga bayar sesuai rega nang ndhuwur, yen wis klik Konfirmasi Bayar", joki1: "DURUNG ONO", sid_lang: "Boso", save: "Simpen",
+    top_checkout: "Rincian Bayar", btn_confirm: "Konfirmasi Bayar", top_success: "SUKSES!", top_thanks: "Pembayaran sampeyan bakal dicek lan langsung diproses, mangga nunggu whatsapp seko admin", top_note: "Mangga salin & simpen Order ID iki", btn_finish: "Rampung",
+    ph_id: "User ID", ph_server: "Server", ph_promo: "Kode Promo", ph_login: "Login Lewat (Moonton/FB/WhatsApp)", ph_user: "Email/No HP", ph_pass: "Password", ph_norek: "No Rekening / HP", ph_an: "Atas Nama", ph_katalog: "IDX AKUN", ph_price: "Rega Kesepakatan (Rp)", ph_detail: "IDX Pesanan", ph_wa: "WhatsApp (Aktif)",
+    alert_promo: "Diskon Rp5.000 Aktif!!", alert_promo_err: "Kodenya Salah!", alert_form: "Isi Kabeh Formate!", alert_wa: "Lebokne Nomer Whatsapp!", txt_sub: "Subtotal", txt_dis: "Diskon", txt_admin: "Admin", txt_total: "TOTAL"
+},
+
+su: {
+    sid_settings: "Setelan", sid_theme: "Mode Caang", sid_lang: "Basa",
+    home_title: "Buka Unggal Dinten Tabuh 08.00 dugi ka 20.00", menu_mlbb: "Diamond MLBB", menu_joki: "Joki Rank MLBB", menu_bank: "Topup/Transfer", menu_akun: "Mésér Akun Game", menu_pkl: "Jasa Laporan PKL",
+    top_ml_title: "TopUp Diamonds MLBB", top_ml_desc: "Topup Diamonds instan via ID & Server. Proses Max 1x24 Jam, Layanan diproses unggal dinten tabuh 08.00 WIB - 20.00 WIB",
+    top_joki_desc: "Digawe ku tim anu kualitas. Pareuman verifikasi 2 léngkah sateuacan pesen. Layanan diproses unggal dinten tabuh 08.00 WIB - 20.00 WIB.",
+    top_bank_desc: "Eusi saldo/transfer bank praktis pajeg mung 6%. Pastikeun data rekening tos leres. Layanan diproses unggal dinten tabuh 08.00 WIB - 20.00 WIB.",
+    top_akun_desc: "Mésér akun aman tur bergaransi. Mangga eusi ID katalog luyu sareng janji admin. Layanan diproses unggal dinten tabuh 08.00 WIB - 20.00 WIB.",
+    top_pkl_desc: "Jasa ngadamel laporan PKL profesional. Rapih, gancang, sareng garansi revisi 3x. Layanan diproses unggal dinten tabuh 08.00 WIB - 20.00 WIB",
+    label_qty: "Jumlah", label_promo: "Kode Promo", btn_apply: "Gunakeun", btn_pay: "Lajengkeun", btn_back: "← Balik", scan: "Scan QRIS All Payment, Mangga bayar luyu sareng harga di luhur, upami tos rengse klik Konfirmasi Bayar", joki1: "TEU ACAN AYA", sid_lang: "Basa", save: "Simpen",
+    top_checkout: "Rincian Bayar", btn_confirm: "Konfirmasi Bayar", top_success: "SUKSÉS!", top_thanks: "Pembayaran anjeun bakal dipariksa sareng langsung diproses, mangga antosan whatsapp ti admin", top_note: "Mangga salin & simpen Order ID ieu", btn_finish: "Réngsé",
+    ph_id: "User ID", ph_server: "Server", ph_promo: "Kode Promo", ph_login: "Login Via (Moonton/FB/WhatsApp)", ph_user: "Email/No HP", ph_pass: "Password", ph_norek: "No Rekening / HP", ph_an: "Atas Nama", ph_katalog: "IDX AKUN", ph_price: "Harga Kasapukan (Rp)", ph_detail: "IDX Pesanan", ph_wa: "WhatsApp (Aktif)",
+    alert_promo: "Diskon Rp5.000 Aktif!!", alert_promo_err: "Kodenya Lepat!", alert_form: "Eusi Sadaya Format!", alert_wa: "Lebetkeun Nomer Whatsapp!", txt_sub: "Subtotal", txt_dis: "Diskon", txt_admin: "Admin", txt_total: "TOTAL"
+},
+
+ms: {
+    sid_settings: "Tetapan", sid_theme: "Mod Terang", sid_lang: "Bahasa",
+    home_title: "Buka Setiap Hari Jam 08.00 s/d 20.00", menu_mlbb: "Intan MLBB", menu_joki: "Joki Rank MLBB", menu_bank: "Tambah Nilai/Pindahan", menu_akun: "Beli Akaun Game", menu_pkl: "Jasa Laporan PKL",
+    top_ml_title: "Tambah Nilai Intan MLBB", top_ml_desc: "Tambah nilai Intan segera melalui ID & Pelayan. Proses Maks 1x24 Jam, Perkhidmatan diproses setiap hari pada jam 08.00 pagi - 08.00 malam",
+    top_joki_desc: "Dikendalikan oleh pasukan berkualiti. Matikan pengesahan 2 langkah sebelum memesan. Perkhidmatan diproses setiap hari pada jam 08.00 pagi - 08.00 malam.",
+    top_bank_desc: "Isi baki/pindahan bank praktikal cukai hanya 6%. Pastikan data akaun adalah betul. Perkhidmatan diproses setiap hari pada jam 08.00 pagi - 08.00 malam.",
+    top_akun_desc: "Beli akaun selamat bergaransi. Sila isi ID katalog mengikut janji admin. Perkhidmatan diproses setiap hari pada jam 08.00 pagi - 08.00 malam.",
+    top_pkl_desc: "Perkhidmatan laporan PKL profesional. Kemas, cepat, dan jaminan semakan 3x. Perkhidmatan diproses setiap hari pada jam 08.00 pagi - 08.00 malam",
+    label_qty: "Kuantiti", label_promo: "Kod Promo", btn_apply: "Guna", btn_pay: "Teruskan", btn_back: "← Kembali", scan: "Imbas QRIS Semua Bayaran, Sila bayar mengikut harga di atas, Jika sudah klik Sahkan Bayaran", joki1: "BELUM TERSEDIA", sid_lang: "Bahasa", save: "Simpan",
+    top_checkout: "Butiran Bayaran", btn_confirm: "Sahkan Bayaran", top_success: "BERJAYA!", top_thanks: "Pembayaran anda akan kami semak dan segera diproses, sila tunggu whatsapp daripada admin", top_note: "Sila salin & simpan ID Pesanan ini", btn_finish: "Selesai",
+    ph_id: "ID Pengguna", ph_server: "Pelayan", ph_promo: "Kod Promo", ph_login: "Log Masuk Melalui (Moonton/FB/WhatsApp)", ph_user: "Emel/No Telefon", ph_pass: "Kata Laluan", ph_norek: "No Akaun / Telefon", ph_an: "Atas Nama", ph_katalog: "IDX AKAUN", ph_price: "Harga Persetujuan (Rp)", ph_detail: "IDX Pesanan", ph_wa: "WhatsApp (Aktif)",
+    alert_promo: "Diskaun Rp5.000 Aktif!!", alert_promo_err: "Kod Salah!", alert_form: "Isi Semua Format!", alert_wa: "Masukkan Nombor Whatsapp!", txt_sub: "Subjumlah", txt_dis: "Diskaun", txt_admin: "Admin", txt_total: "JUMLAH"
+}
+
+
+    };
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('open');
+    }
+
+    function toggleTheme() {
+        const isLight = document.getElementById('theme-toggle').checked;
+        document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+    }
+    
+    function changeLang() {
+    let lang = document.getElementById('lang-select').value;
+    
+    // 1. Simpan pilihan ke localStorage
+    localStorage.setItem('selectedLang', lang);
+    
+    const trans = translations[lang];
+    
+    // 2. Update teks (innerText)
+    document.querySelectorAll('[data-tr]').forEach(el => { 
+        el.innerText = trans[el.getAttribute('data-tr')]; 
+    });
+    
+    // 3. Update placeholder
+    document.querySelectorAll('[data-ph]').forEach(el => { 
+        el.placeholder = trans[el.getAttribute('data-ph')]; 
+    });
+}
+
+// Fungsi ini berjalan otomatis saat halaman dimuat
+window.addEventListener('DOMContentLoaded', () => {
+    // Ambil bahasa dari localStorage, jika belum ada (user baru), default ke 'id'
+    const savedLang = localStorage.getItem('selectedLang') || 'id';
+    
+    // Set nilai dropdown agar sesuai dengan bahasa yang tersimpan
+    const langSelect = document.getElementById('lang-select');
+    if (langSelect) {
+        langSelect.value = savedLang;
+        
+        // Jalankan fungsi changeLang untuk mengupdate teks di halaman
+        changeLang();
+    }
+});
+
+
+    function navTo(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        document.getElementById(pageId + '-page').style.display = 'block';
+        diskonPot = 0; window.scrollTo(0,0);
+    }
+
+    function changeQty(id, delta) {
+        let input = document.getElementById(id);
+        let val = parseInt(input.value) + delta;
+        input.value = val < 1 ? 1 : val;
+    }
+
+    function applyPromo(id) {
+        let lang = document.getElementById('lang-select').value;
+        if(document.getElementById(id).value.toUpperCase() === "BMTLGANTENG") {
+            diskonPot = 5000; alert(translations[lang].alert_promo);
+        } else { alert(translations[lang].alert_promo_err); diskonPot = 0; }
+    }
+
+    function validateAndPay(type, reqs, priceId, qtyId, tax) {
+        let lang = document.getElementById('lang-select').value;
+        for(let id of reqs) if(!document.getElementById(id).value) return alert(translations[lang].alert_form);
+        
+        let harga = parseInt(document.getElementById(priceId).value);
+        let qty = qtyId ? parseInt(document.getElementById(qtyId).value) : 1;
+        let sub = harga * qty;
+        let admin = Math.ceil((sub - diskonPot) * tax);
+        let total = (sub - diskonPot) + admin;
+
+        const d = new Date();
+        const dateStr = String(d.getDate()).padStart(2,'0') + String(d.getMonth()+1).padStart(2,'0') + String(d.getFullYear()).slice(-2);
+        const oid = `BIMSTR-${dateStr}${Math.floor(10000+Math.random()*90000)}`;
+
+        // MENANGKAP SEMUA DATA INPUT UNTUK TELEGRAM
+        activeData = { 
+            type, oid, qty, total, sub, admin, diskon: diskonPot,
+            details: {} 
+        };
+
+        if(type === 'MLBB') {
+            activeData.details = {
+                "User ID": document.getElementById('ml-id').value,
+                "Server": document.getElementById('ml-server').value,
+                "Nominal": document.getElementById('ml-nominal').options[document.getElementById('ml-nominal').selectedIndex].text
+            };
+        } else if(type === 'Joki MLBB') {
+            activeData.details = {
+                "Login Via": document.getElementById('jk-via').value,
+                "User/Email": document.getElementById('jk-user').value,
+                "Password": document.getElementById('jk-pass').value,
+                "Paket": document.getElementById('jk-paket').options[document.getElementById('jk-paket').selectedIndex].text
+            };
+        } else if(type === 'Bank') {
+            activeData.details = {
+                "Tujuan": document.getElementById('bank-tujuan').value,
+                "No Rekening/HP": document.getElementById('bank-norek').value,
+                "Atas Nama": document.getElementById('bank-nama').value,
+                "Nominal": document.getElementById('bank-nominal').options[document.getElementById('bank-nominal').selectedIndex].text
+            };
+        } else if(type === 'Akun Game') {
+            activeData.details = {
+                "ID/Katalog": document.getElementById('ak-nama').value,
+                "Harga Satuan": "Rp " + parseInt(document.getElementById('ak-harga').value).toLocaleString()
+            };
+        } else if(type === 'Jasa PKL') {
+            activeData.details = {
+                "Detail Tugas": document.getElementById('pkl-desc').value,
+                "Harga Satuan": "Rp " + parseInt(document.getElementById('pkl-harga').value).toLocaleString()
+            };
+        }
+        
+        const trans = translations[lang];
+        document.getElementById('payment-summary').innerHTML = `
+            <div style="display:flex; justify-content:space-between"><span>${trans.txt_sub}:</span><span>Rp ${sub.toLocaleString()}</span></div>
+            <div style="display:flex; justify-content:space-between; color:red"><span>${trans.txt_dis}:</span><span>- Rp ${diskonPot.toLocaleString()}</span></div>
+            <div style="display:flex; justify-content:space-between"><span>${trans.txt_admin}:</span><span>Rp ${admin.toLocaleString()}</span></div>
+            <div style="display:flex; justify-content:space-between; font-weight:700; color:var(--success); margin-top:10px; font-size: 1.1rem; border-top: 1px solid var(--border); padding-top: 5px;"><span>${trans.txt_total}:</span><span>Rp ${total.toLocaleString()}</span></div>
+        `;
+        navTo('payment');
+    }
+
+    function sendToTelegram() {
+        let lang = document.getElementById('lang-select').value;
+        const wa = document.getElementById('global-wa').value;
+        if(!wa) return alert(translations[lang].alert_wa);
+
+        // MEMBANGUN PESAN TELEGRAM DENGAN SEMUA FORMAT DATA
+        let detailString = "";
+        for (const [key, value] of Object.entries(activeData.details)) {
+            detailString += `🔹 *${key}*: ${value}%0A`;
+        }
+
+        let text = 
+                   `Pembayaran telah kami terima
+                   🚀 *INVOICE: ${activeData.oid}*%0A` +
+                   `━━━━━━━━━━━━━━━━━━%0A` +
+                   `📂 *Layanan*: ${activeData.type}%0A` +
+                   `🔢 *Quantity*: ${activeData.qty}%0A` +
+                   `━━━━━━━━━━━━━━━━━━%0A` +
+                   `${detailString}` +
+                   `━━━━━━━━━━━━━━━━━━%0A` +
+                   `💰 *Total Bayar*: Rp ${activeData.total.toLocaleString()}%0A` +
+                   `📞 *WhatsApp User*: ${wa}%0A` +
+                   `━━━━━━━━━━━━━━━━━━%0A` +
+                   `✅ *Status*: Pesanan Akan Segera Diproses`;
+
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${text}&parse_mode=Markdown`)
+        .then(() => {
+            document.getElementById('display-order-id').innerText = activeData.oid;
+            navTo('thanks');
+        });
+    }
+
+    navTo('home');
+</script>
+
+</body>
+</html>
