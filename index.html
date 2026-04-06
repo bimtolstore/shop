@@ -236,36 +236,53 @@
     </div>
 
     <div id="akun-page" class="page">
-        <div class="btn-circle-back" onclick="navTo('home')">❮</div>
-        <div class="input-group">
-            <h3 data-tr="menu_akun">Beli Akun Game</h3>
-            <div class="desc" data-tr="top_akun_desc">Beli akun aman bergaransi. Harap isi ID katalog sesuai janji admin. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.</div>
-            <input type="text" id="ak-nama" placeholder="IDX AKUN" data-ph="ph_katalog">
-            <input type="number" id="ak-harga" placeholder="Harga Kesepakatan (Rp)" data-ph="ph_price">
-            <label data-tr="label_promo">Kode Promo</label>
-            <div class="promo-wrapper">
-                <input type="text" id="ak-promo" placeholder="Kode Promo" data-ph="ph_promo">
-                <button class="btn-promo" onclick="applyPromo('ak-promo')" data-tr="btn_apply">Gunakan</button>
-            </div>
+    <div class="btn-circle-back" onclick="navTo('home')">❮</div>
+    <div class="input-group">
+        <h3 data-tr="menu_akun">Beli Akun Game</h3>
+        <div class="desc" data-tr="top_akun_desc">Beli akun aman bergaransi. Harap isi ID katalog sesuai janji admin. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB.</div>
+        <input type="text" id="ak-nama" placeholder="IDX AKUN" data-ph="ph_katalog">
+        <input type="number" id="ak-harga" placeholder="Harga Kesepakatan (Rp)" data-ph="ph_price">
+        
+        <label data-tr="label_qty">Jumlah</label>
+        <div class="qty-wrapper">
+            <button class="qty-btn" onclick="changeQty('ak-qty', -1)">-</button>
+            <input type="number" id="ak-qty" value="1" min="1" class="qty-input">
+            <button class="qty-btn" onclick="changeQty('ak-qty', 1)">+</button>
         </div>
-        <button class="btn-pay" onclick="validateAndPay('Akun Game', ['ak-nama', 'ak-harga'], 'ak-harga', 'ak-qty', 0.04)" data-tr="btn_pay">Lanjutkan</button>
-    </div>
 
-    <div id="pkl-page" class="page">
-        <div class="btn-circle-back" onclick="navTo('home')">❮</div>
-        <div class="input-group">
-            <h3 data-tr="menu_pkl">Jasa Laporan PKL</h3>
-            <div class="desc" data-tr="top_pkl_desc">Jasa pembuatan laporan PKL profesional. Rapi, cepat, dan bergaransi revisi 3x. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB</div>
-            <textarea id="pkl-desc" placeholder="IDX Pesanan" data-ph="ph_detail"></textarea>
-            <input type="number" id="pkl-harga" placeholder="Harga Kesepakatan (Rp)" data-ph="ph_price">
-            <label data-tr="label_promo">Kode Promo</label>
-            <div class="promo-wrapper">
-                <input type="text" id="pkl-promo" placeholder="Kode Promo" data-ph="ph_promo">
-                <button class="btn-promo" onclick="applyPromo('pkl-promo')" data-tr="btn_apply">Gunakan</button>
-            </div>
+        <label data-tr="label_promo">Kode Promo</label>
+        <div class="promo-wrapper">
+            <input type="text" id="ak-promo" placeholder="Kode Promo" data-ph="ph_promo">
+            <button class="btn-promo" onclick="applyPromo('ak-promo')" data-tr="btn_apply">Gunakan</button>
         </div>
-        <button class="btn-pay" onclick="validateAndPay('Jasa PKL', ['pkl-desc', 'pkl-harga'], 'pkl-harga', 'pkl-qty', 0.04)" data-tr="btn_pay">Lanjutkan</button>
     </div>
+    <button class="btn-pay" onclick="validateAndPay('Akun Game', ['ak-nama', 'ak-harga'], 'ak-harga', 'ak-qty', 0.04)" data-tr="btn_pay">Lanjutkan</button>
+</div>
+
+<div id="pkl-page" class="page">
+    <div class="btn-circle-back" onclick="navTo('home')">❮</div>
+    <div class="input-group">
+        <h3 data-tr="menu_pkl">Jasa Laporan PKL</h3>
+        <div class="desc" data-tr="top_pkl_desc">Jasa pembuatan laporan PKL profesional. Rapi, cepat, dan bergaransi revisi 3x. Layanan Diproses setiap hari pada jam 08.00 WIB - 20.00 WIB</div>
+        <textarea id="pkl-desc" placeholder="IDX Pesanan" data-ph="ph_detail"></textarea>
+        <input type="number" id="pkl-harga" placeholder="Harga Kesepakatan (Rp)" data-ph="ph_price">
+        
+        <label data-tr="label_qty">Jumlah</label>
+        <div class="qty-wrapper">
+            <button class="qty-btn" onclick="changeQty('pkl-qty', -1)">-</button>
+            <input type="number" id="pkl-qty" value="1" min="1" class="qty-input">
+            <button class="qty-btn" onclick="changeQty('pkl-qty', 1)">+</button>
+        </div>
+
+        <label data-tr="label_promo">Kode Promo</label>
+        <div class="promo-wrapper">
+            <input type="text" id="pkl-promo" placeholder="Kode Promo" data-ph="ph_promo">
+            <button class="btn-promo" onclick="applyPromo('pkl-promo')" data-tr="btn_apply">Gunakan</button>
+        </div>
+    </div>
+    <button class="btn-pay" onclick="validateAndPay('Jasa PKL', ['pkl-desc', 'pkl-harga'], 'pkl-harga', 'pkl-qty', 0.04)" data-tr="btn_pay">Lanjutkan</button>
+</div>
+
 
     <div id="payment-page" class="page">
         <div class="input-group">
