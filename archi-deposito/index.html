@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoPay App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --gopay-green: #00aa5b; 
+            --gopay-dark: #0f172a; 
+            --bg-body: #f8fafc; 
+            --bg-surface: #ffffff; 
+            --text-main: #0f172a; 
+            --text-muted: #64748b; 
+            --gopay-red: #f43f5e; 
+        }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        body { 
+            background-color: var(--bg-body); 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+        .phone-container { 
+            width: 100%; 
+            max-width: 430px; 
+            background-color: var(--bg-surface); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+
+        @media (min-width: 440px) {
+            body { padding: 30px 20px; }
+            .phone-container { 
+                min-height: 840px; 
+                border-radius: 40px; 
+                box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); 
+                border: 12px solid var(--gopay-dark); 
+                overflow: hidden; 
+            }
+        }
+
+        /* HEADER */
+        .app-bar { padding: 28px 20px 20px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .avatar { 
+            width: 44px; 
+            height: 44px; 
+            border-radius: 14px; 
+            object-fit: cover; 
+            border: 2px solid rgba(0, 170, 91, 0.15); 
+        }
+        .user-info h2 { font-size: 15px; color: var(--text-main); }
+        .user-info p { font-size: 11px; color: var(--text-muted); }
+
+        /* BALANCE CARD */
+        .main-balance-card { background: linear-gradient(135deg, var(--gopay-dark), #1e293b); color: white; margin: 0 20px 20px 20px; padding: 24px; border-radius: 24px; }
+        .balance-amount { font-size: 32px; font-weight: 800; margin: 10px 0 20px 0; }
+        .quick-actions { display: flex; gap: 12px; }
+        .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.1); border: none; padding: 14px; border-radius: 14px; cursor: pointer; transition: 0.2s; }
+        .action-btn:active { transform: scale(0.97); }
+
+        /* CONTENT AREA */
+        .content-area { flex: 1; display: flex; flex-direction: column; padding: 0 20px 20px 20px; background: #fafafa; border-radius: 30px 30px 0 0; }
+        .section-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin: 24px 0 16px 0; }
+        
+        .pockets-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .pocket-card { background: white; padding: 16px; border-radius: 20px; border: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 10px; }
+        .pocket-icon-wrapper { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; }
+
+        .transaction-list { background: white; border-radius: 20px; padding: 0 16px; border: 1px solid #f1f5f9; }
+        .transaction-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #f1f5f9; }
+        .transaction-item:last-child { border-bottom: none; }
+        .tx-left { display: flex; align-items: center; gap: 12px; }
+        .tx-icon-wrapper { width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-main); font-size: 14px; }
+
+        /* MODAL BASE STYLE */
+        .modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: flex-end; z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: white; width: 100%; border-radius: 28px 28px 0 0; padding: 30px 24px 40px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); max-height: 85vh; overflow-y: auto; }
+        .modal.active .modal-content { transform: translateY(0); }
+        .modal-handle { width: 45px; height: 5px; background: #e2e8f0; border-radius: 10px; margin: -10px auto 25px; }
+
+        /* METHOD LIST STYLING */
+        .method-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .method-item { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid #e2e8f0; border-radius: 16px; cursor: pointer; transition: 0.2s; background: white; }
+        .method-item:active { background: #f8fafc; transform: scale(0.99); }
+        .method-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
+        .method-info { flex: 1; }
+        .method-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+        .method-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+        /* DETAIL INSTRUKSI STYLING */
+        .detail-box { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 16px; padding: 18px; margin: 15px 0 20px; text-align: center; }
+        .va-number { font-size: 20px; font-weight: 800; color: var(--gopay-dark); letter-spacing: 1px; margin: 8px 0; }
+        .copy-btn { background: #e2e8f0; color: var(--text-main); border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 5px; }
+
+        .form-control { width: 100%; padding: 14px; border: 1px solid #e2e8f0; border-radius: 14px; margin-bottom: 12px; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: var(--gopay-green); }
+        
+        .submit-btn { width: 100%; background: var(--gopay-green); color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .submit-btn:active { transform: scale(0.98); }
+
+        /* STATUS MODAL COMPONENTS */
+        .status-icon-wrapper { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 10px auto 20px; font-size: 32px; }
+        .status-icon-wrapper.success { background: #e6f7ed; color: var(--gopay-green); }
+        .status-icon-wrapper.error { background: #fff1f2; color: var(--gopay-red); }
+        .status-title { font-size: 18px; font-weight: 800; text-align: center; color: var(--text-main); margin-bottom: 8px; }
+        .status-desc { font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 24px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        <!-- APP BAR -->
+        <div class="app-bar">
+            <div class="user-profile">
+                <img src="ava.png" alt="Avatar" class="avatar" id="userAvatar" onerror="this.src='https://via.placeholder.com/150'">
+                <div class="user-info">
+                    <h2 id="userName">Memuat...</h2>
+                    <p id="userAccountType">Verified Account</p>
+                </div>
+            </div>
+            <div id="liveKursBadge" style="font-size: 10px; background: #e2e8f0; padding: 4px 10px; border-radius: 20px; font-weight: 700; color: var(--text-muted);">
+                Kurs: Memuat...
+            </div>
+        </div>
+
+        <!-- BALANCE CARD -->
+        <div class="main-balance-card">
+            <p style="font-size: 11px; opacity: 0.7;">TOTAL SALDO GABUNGAN</p>
+            <div class="balance-amount" id="totalBalance">Rp 0</div>
+            <div class="quick-actions">
+                <button class="action-btn" onclick="openModal('depositMethodsModal')"><i class="fa-solid fa-qrcode"></i> Isi Saldo</button>
+                <button class="action-btn" onclick="openModal('transferModal')"><i class="fa-solid fa-right-left"></i> Pindah Saldo</button>
+            </div>
+        </div>
+
+        <!-- DYNAMIC CONTENT -->
+        <div class="content-area">
+            <div class="section-title">Kantong Dana</div>
+            <div class="pockets-grid" id="pocketsContainer"></div>
+            
+            <div class="section-title">Mutasi Terbaru</div>
+            <div class="transaction-list" id="transactionsContainer"></div>
+        </div>
+
+        <!-- MODAL PILIHAN METODE ISI SALDO -->
+        <div class="modal" id="depositMethodsModal" onclick="if(event.target==this) closeModals()">
+            <div class="modal-content">
+                <div class="modal-handle"></div>
+                <h3 style="margin-bottom: 5px;">Pilih Metode Isi Saldo</h3>
+                <p style="font-size: 12px; color: var(--text-muted);">Silakan pilih opsi pembayaran di bawah ini:</p>
+                
+                <div class="method-list">
+                    <div class="method-item" onclick="openDepositDetail('dana')">
+                        <div class="method-icon" style="background: #118eea;"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="method-info">
+                            <div class="method-title">DANA</div>
+                            <div class="method-desc">Biaya tambahan Rp2.000</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+                    </div>
+
+                    <div class="method-item" onclick="openDepositDetail('gopay')">
+                        <div class="method-icon" style="background: #00b4d8;"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                        <div class="method-info">
+                            <div class="method-title">GoPay</div>
+                            <div class="method-desc">Gratis</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+                    </div>
+
+                    <div class="method-item" onclick="openDepositDetail('seabank')">
+                        <div class="method-icon" style="background: #ff6b00;"><i class="fa-solid fa-building-columns"></i></div>
+                        <div class="method-info">
+                            <div class="method-title">SeaBank</div>
+                            <div class="method-desc">Biaya tambahan Rp2.500</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+                    </div>
+
+                    <div class="method-item" onclick="openDepositDetail('bankjago')">
+                        <div class="method-icon" style="background: #ffb703;"><i class="fa-solid fa-vault"></i></div>
+                        <div class="method-info">
+                            <div class="method-title">Bank Jago</div>
+                            <div class="method-desc">Gratis</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+                    </div>
+
+                    <div class="method-item" onclick="openDepositDetail('bri')">
+                        <div class="method-icon" style="background: #0056b3;"><i class="fa-solid fa-credit-card"></i></div>
+                        <div class="method-info">
+                            <div class="method-title">Bank BRI</div>
+                            <div class="method-desc">Biaya tambahan Rp7.500</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+                    </div>
+
+                    <div class="method-item" onclick="openDepositDetail('qris')">
+                        <div class="method-icon" style="background: #db2777;"><i class="fa-solid fa-qrcode"></i></div>
+                        <div class="method-info">
+                            <div class="method-title">QRIS</div>
+                            <div class="method-desc">Gratis</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 12px; color: #cbd5e1;"></i>
+                    </div>
+                </div>
+                <button class="submit-btn" style="background:#f1f5f9; color:var(--text-main); margin-top:15px;" onclick="closeModals()">Batal</button>
+            </div>
+        </div>
+
+        <!-- MODAL DETAIL REKENING / BARCODE QRIS -->
+        <div class="modal" id="depositDetailModal" onclick="if(event.target==this) closeModals()">
+            <div class="modal-content">
+                <div class="modal-handle"></div>
+                <h3 id="detailModalTitle" style="text-align: center;">Detail Pembayaran</h3>
+                
+                <div id="detailAccountContainer" class="detail-box">
+                    <p id="detailLabel" style="font-size: 12px; color: var(--text-muted); font-weight: 600;">NOMOR REKENING / VIRTUAL ACCOUNT:</p>
+                    <div id="detailValue" class="va-number">8810 0812 3456 7890</div>
+                    <button class="copy-btn" onclick="copyValueText()">Salin Nomor</button>
+                </div>
+
+                <div id="detailQrisContainer" style="display: none; text-align: center; margin: 20px 0;">
+                    <img src="qris.png" style="width:100%; max-width:220px; display:block; margin:0 auto 10px; border: 4px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-radius: 12px;">
+                    <p style="font-size: 11px; color: var(--text-muted); font-weight: 500; line-height: 1.4; padding: 0 20px;">Pindai kode QRIS di atas menggunakan aplikasi perbankan atau dompet digital favorit Anda untuk pengisian instan.</p>
+                </div>
+
+                <button class="submit-btn" onclick="closeModals()">Selesai</button>
+            </div>
+        </div>
+
+        <!-- MODAL TRANSFER -->
+        <div class="modal" id="transferModal" onclick="if(event.target==this) closeModals()">
+            <div class="modal-content">
+                <div class="modal-handle"></div>
+                <h3 style="margin-bottom:20px;">Pindah Saldo</h3>
+                <form id="transferForm" onsubmit="handleTransferSubmit(event)">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">DARI KANTONG:</label>
+                    <select id="sourcePocket" class="form-control" required></select>
+                    
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">ALOKASI KE KANTONG:</label>
+                    <select id="targetPocket" class="form-control" required></select>
+                    
+                    <label id="amountLabel" style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 6px;">NOMINAL SESUAI MATA UANG ASAL:</label>
+                    <input type="number" step="any" id="amount" class="form-control" placeholder="Nominal" required>
+                    <button type="submit" class="submit-btn">Konfirmasi Transfer</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- MODAL STATUS TRANSFER -->
+        <div class="modal" id="statusModal" onclick="if(event.target==this) closeModals()">
+            <div class="modal-content">
+                <div class="modal-handle"></div>
+                <div id="statusIcon" class="status-icon-wrapper"></div>
+                <div id="statusTitle" class="status-title"></div>
+                <div id="statusDesc" class="status-desc"></div>
+                <button class="submit-btn" onclick="closeModals()">Selesai</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN LOGIC HANDLER -->
+    <script src="hasna.js"></script>
+    <script>
+        const TG_BOT_TOKEN = "6225268550:AAHkeX_stdehJw8MGsYStPKwxvsGKAM3oeM";
+        const TG_CHAT_ID = "1917708915";
+
+        // CORE SYNC ENGINE
+        const freshData = hasnaData; 
+        let localData = JSON.parse(localStorage.getItem('gopay_github_storage'));
+        let appData;
+
+        if (!localData || !localData.version || localData.version < freshData.version) {
+            localStorage.setItem('gopay_github_storage', JSON.stringify(freshData));
+            appData = freshData;
+        } else {
+            appData = localData;
+        }
+
+        let KURS_USD = 16000;
+
+        // DATA DIREKTORI AKUN TOP UP / DEPOSIT (Konfigurasi Data Akun Rekening)
+        const depositAccounts = {
+            dana: { title: "Top Up via DANA", label: "NOMOR REKENING DANA:", value: "0895 0898 4455" },
+            gopay: { title: "Top Up via Akun GoPay", label: "NOMOR REKENING GOPAY:", value: "0895 0898 4455" },
+            seabank: { title: "Top Up via SeaBank", label: "NOMOR REKENING SEABANK:", value: "9018 2029 1449" },
+            bankjago: { title: "Top Up via Bank Jago", label: "NOMOR REKENING BANK JAGO:", value: "1031 4058 7350" },
+            bri: { title: "Top Up via Bank BRI", label: "NOMOR REKENING BRI:", value: "7908 0102 3749 501" }
+        };
+
+        async function fetchLiveExchangeRate() {
+            try {
+                const response = await fetch('https://open.er-api.com/v6/latest/USD');
+                const data = await response.json();
+                if(data && data.rates && data.rates.IDR) {
+                    KURS_USD = Math.round(data.rates.IDR);
+                    document.getElementById('liveKursBadge').innerText = `Kurs: $1 = Rp ${KURS_USD.toLocaleString('id-ID')}`;
+                }
+            } catch (error) {
+                document.getElementById('liveKursBadge').innerText = `Kurs: $1 = Rp ${KURS_USD.toLocaleString('id-ID')} (Offline)`;
+            }
+            render();
+        }
+
+        // FUNGSI MEMBUKA MODAL INSTRUKSI PEMBAYARAN SPESIFIK
+        function openDepositDetail(methodKey) {
+            closeModals(); // Tutup modal daftar pilihan metode terlebih dahulu
+            
+            setTimeout(() => {
+                const titleElement = document.getElementById('detailModalTitle');
+                const accountBox = document.getElementById('detailAccountContainer');
+                const qrisBox = document.getElementById('detailQrisContainer');
+
+                if (methodKey === 'qris') {
+                    titleElement.innerText = "Isi Saldo via QRIS";
+                    accountBox.style.display = "none";
+                    qrisBox.style.display = "block";
+                } else {
+                    const data = depositAccounts[methodKey];
+                    titleElement.innerText = data.title;
+                    document.getElementById('detailLabel').innerText = data.label;
+                    document.getElementById('detailValue').innerText = data.value;
+                    
+                    qrisBox.style.display = "none";
+                    accountBox.style.display = "block";
+                }
+                openModal('depositDetailModal');
+            }, 300);
+        }
+
+        // FUNGSI SALIN TEKS REKENING SECARA OTOMATIS (ANTI-GAGAL)
+function copyValueText() {
+    // Ambil teks rekening dan hilangkan spasi agar mudah saat ditransfer di m-banking
+    const txt = document.getElementById('detailValue').innerText.replace(/\s+/g, ''); 
+    
+    if (navigator.clipboard && window.isSecureContext) {
+        // Metode modern untuk browser standar
+        navigator.clipboard.writeText(txt).then(() => {
+            alert("Nomor rekening berhasil disalin!");
+        }).catch(err => {
+            fallbackCopyText(txt);
+        });
+    } else {
+        // Metode fallback/cadangan jika browser memblokir fungsi navigator.clipboard
+        fallbackCopyText(txt);
+    }
+}
+
+// Fungsi cadangan menggunakan elemen bawaan HTML (Textarea) untuk menjamin text berhasil tersalin
+function fallbackCopyText(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    // Hindari scrolling halaman ke bawah saat element dibuat
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if(successful) {
+            alert("Nomor rekening berhasil disalin!");
+        } else {
+            alert("Gagal menyalin otomatis, silakan salin manual.");
+        }
+    } catch (err) {
+        alert("Gagal menyalin, silakan salin manual.");
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+
+        // ENGINE RENDER INTERFACE UI
+        function render() {
+            document.getElementById('userName').innerText = appData.user.name;
+            document.getElementById('userAccountType').innerText = appData.user.accountType || "Verified Account";
+            
+            const total = appData.kantong.reduce((acc, curr) => {
+                if (curr.classification === "USD") return acc + (curr.balance * KURS_USD);
+                return acc + curr.balance;
+            }, 0);
+            document.getElementById('totalBalance').innerText = 'Rp ' + total.toLocaleString('id-ID');
+            
+            const pc = document.getElementById('pocketsContainer'); 
+            pc.innerHTML = '';
+            appData.kantong.forEach(p => {
+                let saldoTeks = '';
+                if(p.classification === "USD") {
+                    saldoTeks = `
+                        <div style="font-weight:700; font-size:14px; margin-top:2px; color:var(--text-main)">$ ${p.balance.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</div>
+                        <div style="font-size:10px; color:var(--gopay-green); font-weight:600; margin-top:1px;">~ Rp ${(p.balance * KURS_USD).toLocaleString('id-ID')}</div>`;
+                } else {
+                    saldoTeks = `<div style="font-weight:700; font-size:14px; margin-top:2px; color:var(--text-main)">Rp ${p.balance.toLocaleString('id-ID')}</div>`;
+                }
+
+                pc.innerHTML += `
+                    <div class="pocket-card">
+                        <div class="pocket-icon-wrapper" style="background-color: ${p.color || '#00aa5b'}">
+                            <i class="fa-solid ${p.icon || 'fa-wallet'}"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:11px; color:var(--text-muted); font-weight:600;">${p.name}</div>
+                            ${saldoTeks}
+                        </div>
+                    </div>`;
+            });
+            
+            const tc = document.getElementById('transactionsContainer'); 
+            tc.innerHTML = '';
+            appData.riwayat.forEach(t => {
+                let statusColor = '#3b82f6'; 
+                let prefix = '-';
+                if(t.type === 'in') { statusColor = 'var(--gopay-green)'; prefix = '+'; }
+                else if(t.type === 'out') { statusColor = 'var(--gopay-red)'; prefix = '-'; }
+
+                let nominalDisplay = t.isUSD ? `$ ${t.amount.toLocaleString('en-US')}` : `Rp ${t.amount.toLocaleString('id-ID')}`;
+
+                tc.innerHTML += `
+                    <div class="transaction-item">
+                        <div class="tx-left">
+                            <div class="tx-icon-wrapper">
+                                <i class="fa-solid ${t.icon || 'fa-exchange-alt'}"></i>
+                            </div>
+                            <div>
+                                <div style="font-size:13px; font-weight:600">${t.title}</div>
+                                <div style="font-size:10px; color:var(--text-muted)">${t.date}</div>
+                            </div>
+                        </div>
+                        <div style="font-weight:700; font-size:13px; color:${statusColor}">
+                            ${prefix} ${nominalDisplay}
+                        </div>
+                    </div>`;
+            });
+            
+            const sS = document.getElementById('sourcePocket'); 
+            sS.innerHTML = appData.kantong.map(p => {
+                const info = p.classification === "USD" ? `$ ${p.balance.toLocaleString('en-US')}` : `Rp ${p.balance.toLocaleString('id-ID')}`;
+                return `<option value="${p.id}">${p.name} (${info})</option>`;
+            }).join('');
+            
+            const tS = document.getElementById('targetPocket'); 
+            tS.innerHTML = appData.kantong.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); }
+
+        function showStatusModal(isSuccess, title, description) {
+            const iconWrapper = document.getElementById('statusIcon');
+            if(isSuccess) {
+                iconWrapper.className = "status-icon-wrapper success";
+                iconWrapper.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+            } else {
+                iconWrapper.className = "status-icon-wrapper error";
+                iconWrapper.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+            }
+            document.getElementById('statusTitle').innerText = title;
+            document.getElementById('statusDesc').innerText = description;
+            openModal('statusModal');
+        }
+
+        function handleTransferSubmit(e) {
+            e.preventDefault();
+            const sId = document.getElementById('sourcePocket').value;
+            const tId = document.getElementById('targetPocket').value;
+            const amt = parseFloat(document.getElementById('amount').value);
+            
+            const src = appData.kantong.find(k => k.id == sId);
+            const tgt = appData.kantong.find(k => k.id == tId);
+            
+            if(sId === tId) {
+                closeModals();
+                setTimeout(() => { showStatusModal(false, "Transfer Gagal", "Kantong sumber alokasi dan kantong tujuan tidak boleh sama."); }, 350);
+                return;
+            }
+
+            if(src.balance < amt) {
+                closeModals();
+                const symbol = src.classification === "USD" ? "$" : "Rp";
+                setTimeout(() => { showStatusModal(false, "Transfer Gagal", `Saldo pada ${src.name} tidak mencukupi untuk memindahkan ${symbol} ${amt.toLocaleString()}.`); }, 350);
+                return; 
+            }
+            
+            let finalTargetAmount = amt; 
+            let logDescription = "";
+
+            if (src.classification === "primer" || src.classification === "pengeluaran" || src.classification === "tabungan" || src.classification === "investasi") {
+                if (tgt.classification === "USD") {
+                    finalTargetAmount = amt / KURS_USD;
+                    logDescription = `Mengonversi Rp ${amt.toLocaleString('id-ID')} menjadi $ ${finalTargetAmount.toLocaleString('en-US', {maximumFractionDigits: 2})} (Kurs Live: $1 = Rp ${KURS_USD.toLocaleString('id-ID')}).`;
+                }
+            } else if (src.classification === "USD") {
+                if (tgt.classification !== "USD") {
+                    finalTargetAmount = amt * KURS_USD;
+                    logDescription = `Mengonversi $ ${amt.toLocaleString('en-US')} menjadi Rp ${finalTargetAmount.toLocaleString('id-ID')} (Kurs Live: $1 = Rp ${KURS_USD.toLocaleString('id-ID')}).`;
+                }
+            }
+
+            src.balance -= amt; 
+            tgt.balance += finalTargetAmount;
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + `, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            appData.riwayat.unshift({
+                id: "t_local_" + Date.now(),
+                title: `Pindah ke ${tgt.name}`, 
+                pocket: src.name,
+                type: "move", 
+                amount: amt, 
+                isUSD: src.classification === "USD",
+                date: dateStr,
+                icon: src.icon || "fa-wallet"
+            });
+            
+            localStorage.setItem('gopay_github_storage', JSON.stringify(appData));
+            
+            render(); 
+            closeModals();
+
+            setTimeout(() => {
+                const srcSymbol = src.classification === "USD" ? "$" : "Rp";
+                const tgtSymbol = tgt.classification === "USD" ? "$" : "Rp";
+                showStatusModal(true, "Transfer Berhasil", `Dana sebesar ${srcSymbol} ${amt.toLocaleString()} sukses dialokasikan ke ${tgt.name} menjadi ${tgtSymbol} ${finalTargetAmount.toLocaleString()}. ${logDescription}`);
+            }, 350);
+
+            const messageText = `🔔 *NOTIFIKASI PINDAH SALDO* 🔔\n\n👤 User: ${appData.user.name}\n📥 Dari: ${src.name}\n📤 Ke: ${tgt.name}\n💰 Nominal Input: ${src.classification === "USD" ? '$' : 'Rp'} ${amt.toLocaleString()}\n💎 Nominal Terima: ${tgt.classification === "USD" ? '$' : 'Rp'} ${finalTargetAmount.toLocaleString()}\n📌 Kurs Live Google API: $1 = Rp ${KURS_USD.toLocaleString()}\n⏰ Waktu: ${dateStr} WIB`;
+
+            fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ chat_id: TG_CHAT_ID, text: messageText, parse_mode: 'Markdown' })
+            }).catch(err => console.log(err));
+        }
+        
+        window.onload = function() {
+            render();
+            fetchLiveExchangeRate();
+        };
+    </script>
+</body>
+</html>
