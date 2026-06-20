@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 1.1,
+    "version": 2.0,
     "user": {
         "name": "Archi",
         "accountType": "Premium"
