@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 1.0,
+    "version": 1.1,
     "user": {
         "name": "Archi",
         "accountType": "Premium"
@@ -9,7 +9,7 @@ const hasnaData = {
         { 
             "id": "k1", 
             "name": "Kantong Biasa", 
-            "balance": 10145, 
+            "balance": 30145, 
             "classification": "primer", 
             "icon": "fa-wallet", 
             "color": "#0081a7" 
@@ -56,6 +56,15 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t12", 
+            title: "Deposito via QRIS", 
+            pocket: "Kantong Utama", 
+            type: "in", 
+            amount: 20000, 
+            date: "20 Jun 2026, 19:04", 
+            icon: "fa-arrow-down" 
+        },
         {
             id: "t1", 
             title: "QRIS Ke PT Tokopedia", 
