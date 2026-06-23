@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 4.0,
+    "version": 5.0,
     "user": {
         "name": "Archi",
         "accountType": "Premium"
@@ -9,7 +9,7 @@ const hasnaData = {
         { 
             "id": "k1", 
             "name": "Kantong Biasa", 
-            "balance": 0, 
+            "balance": 77, 
             "classification": "primer", 
             "icon": "fa-wallet", 
             "color": "#0081a7" 
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 39145, 
+            balance: 38645, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -57,13 +57,31 @@ const hasnaData = {
     ],
     riwayat: [
         {
+            id: "t18", 
+            title: "Biaya Layanan Bln Juni", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 500, 
+            date: "23 Jun 2026, 11:00", 
+            icon: "fa-arrow-up" 
+        },
+        {
+            id: "t17", 
+            title: "Bunga Bln Juni (0,2%)", 
+            pocket: "Kantong Utama", 
+            type: "in", 
+            amount: 77, 
+            date: "22 Jun 2026, 20:22", 
+            icon: "fa-arrow-down" 
+        },
+        {
             id: "t16", 
             title: "Biaya Transfer", 
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 1000, 
-            date: "22 Jun 2026, 10:49", 
-            icon: "fa-arrow-out" 
+            date: "23 Jun 2026, 10:49", 
+            icon: "fa-arrow-up" 
         },
         {
             id: "t15", 
@@ -71,7 +89,7 @@ const hasnaData = {
             pocket: "Utama & Jajan", 
             type: "out", 
             amount: 93000, 
-            date: "22 Jun 2026, 10:44", 
+            date: "23 Jun 2026, 10:44", 
             icon: "fa-arrow-up" 
         },
         {
