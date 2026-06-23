@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 3.0,
+    "version": 4.0,
     "user": {
         "name": "Archi",
         "accountType": "Premium"
@@ -9,7 +9,7 @@ const hasnaData = {
         { 
             "id": "k1", 
             "name": "Kantong Biasa", 
-            "balance": 30145, 
+            "balance": 0, 
             "classification": "primer", 
             "icon": "fa-wallet", 
             "color": "#0081a7" 
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 103000, 
+            balance: 39145, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -56,6 +56,24 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t16", 
+            title: "Biaya Transfer", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 1000, 
+            date: "22 Jun 2026, 10:49", 
+            icon: "fa-arrow-out" 
+        },
+        {
+            id: "t15", 
+            title: "Transfer Gopay", 
+            pocket: "Utama & Jajan", 
+            type: "out", 
+            amount: 93000, 
+            date: "22 Jun 2026, 10:44", 
+            icon: "fa-arrow-up" 
+        },
         {
             id: "t14", 
             title: "Deposito via QRIS", 
