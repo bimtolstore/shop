@@ -1,7 +1,7 @@
 const hasnaData = {
-    "version": 5.0,
+    "version": 6.0,
     "user": {
-        "name": "Archi",
+        "name": "Arch",
         "accountType": "Premium"
     },
     
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 38645, 
+            balance: 3645, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -57,13 +57,22 @@ const hasnaData = {
     ],
     riwayat: [
         {
+            id: "t19", 
+            title: "Qris Ke ZUCXASTORE", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 35000, 
+            date: "25 Jun 2026, 16:45", 
+            icon: "fa-arrow-up" 
+        },
+        {
             id: "t18", 
             title: "Biaya Layanan Bln Juni", 
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 500, 
             date: "23 Jun 2026, 11:00", 
-            icon: "fa-arrow-up" 
+            icon: "fa-minus" 
         },
         {
             id: "t17", 
@@ -71,8 +80,8 @@ const hasnaData = {
             pocket: "Kantong Utama", 
             type: "in", 
             amount: 77, 
-            date: "22 Jun 2026, 20:22", 
-            icon: "fa-arrow-down" 
+            date: "23 Jun 2026, 11:00", 
+            icon: "fa-plus" 
         },
         {
             id: "t16", 
