@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 6.2,
+    "version": 6.3,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -9,7 +9,7 @@ const hasnaData = {
         { 
             "id": "k1", 
             "name": "Kantong Biasa", 
-            "balance": 77, 
+            "balance": 0, 
             "classification": "primer", 
             "icon": "fa-wallet", 
             "color": "#0081a7" 
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 28645, 
+            balance: 8834, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -56,6 +56,15 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t22", 
+            title: "Qris Ke PT Tokopedia", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 19888, 
+            date: "27 Jun 2026, 11:00", 
+            icon: "fa-arrow-up" 
+        },
         {
             id: "t21", 
             title: "Qris Ke ZUCXASTORE", 
