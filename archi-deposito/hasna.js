@@ -56,7 +56,6 @@ const hasnaData = {
         }
     ],
     riwayat: [
-        {
             {
             id: "t23", 
             title: "Deposito via QRIS", 
