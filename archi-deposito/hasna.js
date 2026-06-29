@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 6.4,
+    "version": 6.5,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 58834, 
+            balance: 31178, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -56,6 +56,24 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t25", 
+            title: "Biaya Transfer", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 1000, 
+            date: "29 Jun 2026, 18:45", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t24", 
+            title: "Transfer Bank VA BCA", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 26656, 
+            date: "29 Jun 2026, 18:45", 
+            icon: "fa-arrow-up" 
+        },
             {
             id: "t23", 
             title: "Deposito via QRIS", 
@@ -63,7 +81,7 @@ const hasnaData = {
             type: "in", 
             amount: 50000, 
             date: "27 Jun 2026, 13:20", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         },
             {
             id: "t22", 
@@ -90,7 +108,7 @@ const hasnaData = {
             type: "in", 
             amount: 50000, 
             date: "25 Jun 2026, 18:42", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         },
             {
             id: "t19", 
@@ -126,7 +144,7 @@ const hasnaData = {
             type: "out", 
             amount: 1000, 
             date: "23 Jun 2026, 10:49", 
-            icon: "fa-arrow-up" 
+            icon: "fa-minus" 
         },
         {
             id: "t15", 
@@ -144,7 +162,7 @@ const hasnaData = {
             type: "in", 
             amount: 3000, 
             date: "22 Jun 2026, 20:22", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         },
         {
             id: "t13", 
@@ -153,7 +171,7 @@ const hasnaData = {
             type: "in", 
             amount: 100000, 
             date: "22 Jun 2026, 18:48", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         },
         {
             id: "t12", 
@@ -162,7 +180,7 @@ const hasnaData = {
             type: "in", 
             amount: 20000, 
             date: "20 Jun 2026, 19:04", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         },
         {
             id: "t1", 
@@ -198,7 +216,7 @@ const hasnaData = {
             type: "in", 
             amount: 25000, 
             date: "9 Jun 2026, 10:45", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         },
         {
             id: "t5", 
@@ -243,7 +261,7 @@ const hasnaData = {
             type: "in", 
             amount: 100000, 
             date: "2 Jun 2026, 21:07", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         },
         {
             id: "t10", 
@@ -261,7 +279,7 @@ const hasnaData = {
             type: "in", 
             amount: 20000, 
             date: "30 Mei 2026, 18:52", 
-            icon: "fa-arrow-down" 
+            icon: "fa-plus" 
         }
     ]
 };
