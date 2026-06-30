@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 6.5,
+    "version": 6.6,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -9,7 +9,7 @@ const hasnaData = {
         { 
             "id": "k1", 
             "name": "Kantong Biasa", 
-            "balance": 0, 
+            "balance": 62, 
             "classification": "primer", 
             "icon": "fa-wallet", 
             "color": "#0081a7" 
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 31178, 
+            balance: 30678, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -56,6 +56,24 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t27", 
+            title: "Bunga Bln Juli (0,2%)", 
+            pocket: "Kantong Utama", 
+            type: "in", 
+            amount: 62, 
+            date: "01 Jul 2026, 00:01", 
+            icon: "fa-plus" 
+        },
+        {
+            id: "t26", 
+            title: "Biaya Layanan Bln Juli", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 500, 
+            date: "01 Jul 2026, 00:01", 
+            icon: "fa-minus" 
+        },
         {
             id: "t25", 
             title: "Biaya Transfer", 
