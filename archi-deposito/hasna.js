@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 6.7,
+    "version": 6.8,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 55678, 
+            balance: 54083, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -56,6 +56,24 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t30", 
+            title: "Kuota Indosat 6GB 2 Hari", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 9640, 
+            date: "03 Jul 2026, 07:35", 
+            icon: "fa-arrow-up" 
+        },
+        {
+            id: "t29", 
+            title: "Deposito Via QRIS", 
+            pocket: "Uang Jajan", 
+            type: "in", 
+            amount: 8000, 
+            date: "03 Jul 2026, 00:00", 
+            icon: "fa-plus" 
+        },
         {
             id: "t28", 
             title: "Deposito Via QRIS", 
