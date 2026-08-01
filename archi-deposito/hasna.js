@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 7.0,
+    "version": 7.1,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -9,7 +9,7 @@ const hasnaData = {
         { 
             "id": "k1", 
             "name": "Kantong Biasa", 
-            "balance": 62, 
+            "balance": 0, 
             "classification": "primer", 
             "icon": "fa-wallet", 
             "color": "#0081a7" 
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 41083, 
+            balance: 8804, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -56,6 +56,42 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t35", 
+            title: "Bunga Bln Agustus (0,2%)", 
+            pocket: "Uang Jajan", 
+            type: "in", 
+            amount: 17, 
+            date: "01 Agu 2026, 00:01", 
+            icon: "fa-plus" 
+        },
+        {
+            id: "t34", 
+            title: "Biaya Layanan Bln Agustus", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 500, 
+            date: "01 Agu 2026, 00:01", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t33", 
+            title: "Deposito Via QRIS", 
+            pocket: "Uang Jajan", 
+            type: "in", 
+            amount: 9000, 
+            date: "16 Jul 2026, 00:00", 
+            icon: "fa-plus" 
+        },
+        {
+            id: "t32", 
+            title: "Qris Ke PT Tokopedia", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 40859, 
+            date: "04 Jul 2026, 11:35", 
+            icon: "fa-arrow-up" 
+        },
         {
             id: "t31", 
             title: "Qris Ke PT Tokopedia", 
