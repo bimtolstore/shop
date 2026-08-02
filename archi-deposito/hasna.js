@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 7.2,
+    "version": 7.3,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 216804, 
+            balance: 159804, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -56,6 +56,24 @@ const hasnaData = {
         }
     ],
     riwayat: [
+        {
+            id: "t38", 
+            title: "Biaya Transfer", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 2000, 
+            date: "02 Agu 2026, 18:08", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t37", 
+            title: "Transfer Bank BNI", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 55000, 
+            date: "02 Agu 2026, 18:08", 
+            icon: "fa-arrow-up" 
+        },
         {
             id: "t36", 
             title: "Deposito Via QRIS", 
