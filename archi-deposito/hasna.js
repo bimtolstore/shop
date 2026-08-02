@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 7.3,
+    "version": 7.4,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 159804, 
+            balance: 212804, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -62,6 +62,24 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 2000, 
+            date: "03 Agu 2026, 05:22", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t39", 
+            title: "Transfer Bank BCA", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 20000, 
+            date: "03 Agu 2026, 05:22", 
+            icon: "fa-arrow-up" 
+        },
+        {
+            id: "t38", 
+            title: "Biaya Transfer", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 2000, 
             date: "02 Agu 2026, 18:08", 
             icon: "fa-minus" 
         },
@@ -80,7 +98,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "in", 
             amount: 208000, 
-            date: "02 Agu 2026, 14.40", 
+            date: "02 Agu 2026, 14:40", 
             icon: "fa-plus" 
         },
         {
