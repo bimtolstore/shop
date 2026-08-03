@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 7.4,
+    "version": 7.5,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 212804, 
+            balance: 158304, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -57,7 +57,16 @@ const hasnaData = {
     ],
     riwayat: [
         {
-            id: "t38", 
+            id: "t40", 
+            title: "Kuota IM3 18GB 1 Bln", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 54500, 
+            date: "03 Agu 2026, 13.00", 
+            icon: "fa-arrow-up" 
+        },
+        {
+            id: "t40", 
             title: "Biaya Transfer", 
             pocket: "Uang Jajan", 
             type: "out", 
