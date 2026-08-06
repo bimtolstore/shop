@@ -152,8 +152,14 @@
             <div class="section-title">Kantong Dana</div>
             <div class="pockets-grid" id="pocketsContainer"></div>
             
-            <div class="section-title">Mutasi Terbaru</div>
-            <div class="transaction-list" id="transactionsContainer"></div>
+            <!-- SEKSI MUTASI TERBARU DENGAN OPSIONAL FILTER BULAN -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin: 24px 0 16px 0;">
+                <div class="section-title" style="margin: 0;">Mutasi Terbaru</div>
+                <select id="monthFilter" class="form-control" style="width: auto; margin-bottom: 0; padding: 6px 12px; font-size: 12px; font-weight: 600;" onchange="renderTransactions()">
+                    <!-- Opsi bulan akan digenerate otomatis -->
+                </select>
+            </div>
+            <div id="transactionsContainer"></div>
         </div>
 
         <!-- MODAL PILIHAN METODE ISI SALDO -->
@@ -272,6 +278,61 @@
                 <button class="submit-btn" onclick="closeModals()">Selesai</button>
             </div>
         </div>
+
+        <!-- MODAL PEMBERITAHUAN TARIF ADMIN & BIAYA TRANSFER -->
+        <div class="modal" id="feeNoticeModal" onclick="if(event.target==this) closeModals()">
+            <div class="modal-content">
+                <div class="modal-handle"></div>
+                <div class="status-icon-wrapper" style="background: #eff6ff; color: #3b82f6;">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <div class="status-title">Pembaruan Biaya Layanan</div>
+                <p class="status-desc">
+                    Informasi per 01 Agustus 2026, terdapat perubahan tarif admin dan biaya transaksi transfer untuk kenyamanan transaksi Anda dan untuk meningkatkan layanan kami.
+                </p>
+
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #f1f5f9; color: var(--text-muted);">
+                            <th style="padding: 8px 4px;">Metode / Transaksi</th>
+                            <th style="padding: 8px 4px; text-align: right;">Biaya / Tarif</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 4px; font-weight: 600;">Deposito & Topup</td>
+                            <td style="padding: 10px 4px; text-align: right; color: var(--gopay-green); font-weight: 700;">Gratis</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 4px; font-weight: 600;">Transfer Jago, Gopay</td>
+                            <td style="padding: 10px 4px; text-align: right; color: var(--gopay-green); font-weight: 700;">Gratis</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 4px; font-weight: 600;">QRIS & Pembayaran</td>
+                            <td style="padding: 10px 4px; text-align: right; font-weight: 700;">Rp100</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 4px; font-weight: 600;">Transfer Dana, OVO, ShopeePay, dan E-Wallet lainnya</td>
+                            <td style="padding: 10px 4px; text-align: right; font-weight: 700;">Rp3.000</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 4px; font-weight: 600;">Transfer Bank: BRI, BNI, MANDIRI, BCA, BTN, BJB, Permata, Superbank, Neobank, Seabank, dan Bank lainnya</td>
+                            <td style="padding: 10px 4px; text-align: right; font-weight: 700;">Rp3.500</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                            <td style="padding: 10px 4px; font-weight: 600;">Bunga Bulanan</td>
+                            <td style="padding: 10px 4px; text-align: right; color: var(--gopay-green); font-weight: 700;">+1,5%</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 4px; font-weight: 600;">Biaya Layanan Bulanan</td>
+                            <td style="padding: 10px 4px; text-align: right; color: var(--gopay-red); font-weight: 700;">-Rp3.100</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button class="submit-btn" onclick="closeModals()">Saya Mengerti</button>
+            </div>
+        </div>
     </div>
 
     <!-- MAIN LOGIC HANDLER -->
@@ -280,21 +341,27 @@
         const TG_BOT_TOKEN = "6225268550:AAHkeX_stdehJw8MGsYStPKwxvsGKAM3oeM";
         const TG_CHAT_ID = "1917708915";
 
-        // CORE SYNC ENGINE
-        const freshData = hasnaData; 
-        let localData = JSON.parse(localStorage.getItem('gopay_github_storage'));
+        // ENGINE FORCE SYNC DENGAN PROTEKSI DATA LAWAS
         let appData;
+        try {
+            const freshData = hasnaData; 
+            let localData = JSON.parse(localStorage.getItem('gopay_github_storage'));
 
-        if (!localData || !localData.version || localData.version < freshData.version) {
-            localStorage.setItem('gopay_github_storage', JSON.stringify(freshData));
-            appData = freshData;
-        } else {
-            appData = localData;
+            // FORCE RESET: Jika localData tidak memiliki properti esensial, langsung overwrite dengan freshData
+            if (!localData || !localData.riwayat || !localData.kantong || !localData.version || localData.version < freshData.version) {
+                localStorage.setItem('gopay_github_storage', JSON.stringify(freshData));
+                appData = freshData;
+            } else {
+                appData = localData;
+            }
+        } catch (e) {
+            // JIKA LOCALSTORAGE CORRUPT, GUNAKAN FRESH DATA DARI HASNA.JS
+            console.error("Local storage terganggu, memuat data fresh.", e);
+            appData = hasnaData;
         }
 
         let KURS_USD = 16000;
 
-        // DATA DIREKTORI AKUN TOP UP / DEPOSIT (Konfigurasi Data Akun Rekening)
         const depositAccounts = {
             dana: { title: "Top Up via DANA", label: "NOMOR REKENING DANA:", value: "xxx" },
             gopay: { title: "Top Up via Akun GoPay", label: "NOMOR REKENING GOPAY:", value: "xxx" },
@@ -317,10 +384,8 @@
             render();
         }
 
-        // FUNGSI MEMBUKA MODAL INSTRUKSI PEMBAYARAN SPESIFIK
         function openDepositDetail(methodKey) {
-            closeModals(); // Tutup modal daftar pilihan metode terlebih dahulu
-            
+            closeModals();
             setTimeout(() => {
                 const titleElement = document.getElementById('detailModalTitle');
                 const accountBox = document.getElementById('detailAccountContainer');
@@ -343,122 +408,193 @@
             }, 300);
         }
 
-        // FUNGSI SALIN TEKS REKENING SECARA OTOMATIS (ANTI-GAGAL)
-function copyValueText() {
-    // Ambil teks rekening dan hilangkan spasi agar mudah saat ditransfer di m-banking
-    const txt = document.getElementById('detailValue').innerText.replace(/\s+/g, ''); 
-    
-    if (navigator.clipboard && window.isSecureContext) {
-        // Metode modern untuk browser standar
-        navigator.clipboard.writeText(txt).then(() => {
-            alert("Nomor rekening berhasil disalin!");
-        }).catch(err => {
-            fallbackCopyText(txt);
-        });
-    } else {
-        // Metode fallback/cadangan jika browser memblokir fungsi navigator.clipboard
-        fallbackCopyText(txt);
-    }
-}
-
-// Fungsi cadangan menggunakan elemen bawaan HTML (Textarea) untuk menjamin text berhasil tersalin
-function fallbackCopyText(text) {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    // Hindari scrolling halaman ke bawah saat element dibuat
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-    
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-        const successful = document.execCommand('copy');
-        if(successful) {
-            alert("Nomor rekening berhasil disalin!");
-        } else {
-            alert("Gagal menyalin otomatis, silakan salin manual.");
+        function copyValueText() {
+            const txt = document.getElementById('detailValue').innerText.replace(/\s+/g, ''); 
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(txt).then(() => {
+                    alert("Nomor rekening berhasil disalin!");
+                }).catch(err => { fallbackCopyText(txt); });
+            } else {
+                fallbackCopyText(txt);
+            }
         }
-    } catch (err) {
-        alert("Gagal menyalin, silakan salin manual.");
-    }
-    
-    document.body.removeChild(textArea);
-}
 
-
-        // ENGINE RENDER INTERFACE UI
-        function render() {
-            document.getElementById('userName').innerText = appData.user.name;
-            document.getElementById('userAccountType').innerText = appData.user.accountType || "Verified Account";
-            
-            const total = appData.kantong.reduce((acc, curr) => {
-                if (curr.classification === "USD") return acc + (curr.balance * KURS_USD);
-                return acc + curr.balance;
-            }, 0);
-            document.getElementById('totalBalance').innerText = 'Rp ' + total.toLocaleString('id-ID');
-            
-            const pc = document.getElementById('pocketsContainer'); 
-            pc.innerHTML = '';
-            appData.kantong.forEach(p => {
-                let saldoTeks = '';
-                if(p.classification === "USD") {
-                    saldoTeks = `
-                        <div style="font-weight:700; font-size:14px; margin-top:2px; color:var(--text-main)">$ ${p.balance.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</div>
-                        <div style="font-size:10px; color:var(--gopay-green); font-weight:600; margin-top:1px;">~ Rp ${(p.balance * KURS_USD).toLocaleString('id-ID')}</div>`;
+        function fallbackCopyText(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                if(document.execCommand('copy')) {
+                    alert("Nomor rekening berhasil disalin!");
                 } else {
-                    saldoTeks = `<div style="font-weight:700; font-size:14px; margin-top:2px; color:var(--text-main)">Rp ${p.balance.toLocaleString('id-ID')}</div>`;
+                    alert("Gagal menyalin otomatis, silakan salin manual.");
                 }
+            } catch (err) {
+                alert("Gagal menyalin, silakan salin manual.");
+            }
+            document.body.removeChild(textArea);
+        }
 
-                pc.innerHTML += `
-                    <div class="pocket-card">
-                        <div class="pocket-icon-wrapper" style="background-color: ${p.color || '#00aa5b'}">
-                            <i class="fa-solid ${p.icon || 'fa-wallet'}"></i>
-                        </div>
-                        <div>
-                            <div style="font-size:11px; color:var(--text-muted); font-weight:600;">${p.name}</div>
-                            ${saldoTeks}
-                        </div>
-                    </div>`;
-            });
-            
-            const tc = document.getElementById('transactionsContainer'); 
-            tc.innerHTML = '';
-            appData.riwayat.forEach(t => {
-                let statusColor = '#3b82f6'; 
-                let prefix = '-';
-                if(t.type === 'in') { statusColor = 'var(--gopay-green)'; prefix = '+'; }
-                else if(t.type === 'out') { statusColor = 'var(--gopay-red)'; prefix = '-'; }
+        // PARSER FORMAT BULAN DENGAN PERLINDUNGAN TIPE DATA INDEKS
+        function getMonthYearKey(dateStr) {
+            if (!dateStr || typeof dateStr !== 'string') return "Lainnya";
+            const parts = dateStr.trim().replace(/\s+/g, ' ').split(' ');
+            if(parts.length >= 3) {
+                return `${parts[1]} ${parts[2]}`;
+            }
+            return "Lainnya";
+        }
 
-                let nominalDisplay = t.isUSD ? `$ ${t.amount.toLocaleString('en-US')}` : `Rp ${t.amount.toLocaleString('id-ID')}`;
+        // ENGINE RENDER UTAMA DENGAN TRY CATCH AGAR TIDAK BLANK TOTAL JIKA ADA ERROR DATA
+        function render() {
+            try {
+                if(!appData || !appData.user || !appData.kantong) return;
 
-                tc.innerHTML += `
-                    <div class="transaction-item">
-                        <div class="tx-left">
-                            <div class="tx-icon-wrapper">
-                                <i class="fa-solid ${t.icon || 'fa-exchange-alt'}"></i>
+                document.getElementById('userName').innerText = appData.user.name || "User";
+                document.getElementById('userAccountType').innerText = appData.user.accountType || "Verified Account";
+                
+                const total = appData.kantong.reduce((acc, curr) => {
+                    if (curr.classification === "USD") return acc + ((curr.balance || 0) * KURS_USD);
+                    return acc + (curr.balance || 0);
+                }, 0);
+                document.getElementById('totalBalance').innerText = 'Rp ' + total.toLocaleString('id-ID');
+                
+                const pc = document.getElementById('pocketsContainer'); 
+                pc.innerHTML = '';
+                appData.kantong.forEach(p => {
+                    let saldoTeks = '';
+                    const bal = p.balance || 0;
+                    if(p.classification === "USD") {
+                        saldoTeks = `
+                            <div style="font-weight:700; font-size:14px; margin-top:2px; color:var(--text-main)">$ ${bal.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</div>
+                            <div style="font-size:10px; color:var(--gopay-green); font-weight:600; margin-top:1px;">~ Rp ${(bal * KURS_USD).toLocaleString('id-ID')}</div>`;
+                    } else {
+                        saldoTeks = `<div style="font-weight:700; font-size:14px; margin-top:2px; color:var(--text-main)">Rp ${bal.toLocaleString('id-ID')}</div>`;
+                    }
+
+                    pc.innerHTML += `
+                        <div class="pocket-card">
+                            <div class="pocket-icon-wrapper" style="background-color: ${p.color || '#00aa5b'}">
+                                <i class="fa-solid ${p.icon || 'fa-wallet'}"></i>
                             </div>
                             <div>
-                                <div style="font-size:13px; font-weight:600">${t.title}</div>
-                                <div style="font-size:10px; color:var(--text-muted)">${t.date}</div>
+                                <div style="font-size:11px; color:var(--text-muted); font-weight:600;">${p.name}</div>
+                                ${saldoTeks}
                             </div>
-                        </div>
-                        <div style="font-weight:700; font-size:13px; color:${statusColor}">
-                            ${prefix} ${nominalDisplay}
-                        </div>
-                    </div>`;
+                        </div>`;
+                });
+                
+                // GENERATE FILTER DROPDOWN BULAN SECARA BERSIH
+                const filterSelect = document.getElementById('monthFilter');
+                if(filterSelect) {
+                    const existingSelection = filterSelect.value || "all";
+                    const monthsSet = new Set();
+                    
+                    if(appData.riwayat && Array.isArray(appData.riwayat)) {
+                        appData.riwayat.forEach(t => monthsSet.add(getMonthYearKey(t.date)));
+                    }
+                    
+                    filterSelect.innerHTML = '<option value="all">Semua Bulan</option>';
+                    monthsSet.forEach(mKey => {
+                        filterSelect.innerHTML += `<option value="${mKey}">${mKey}</option>`;
+                    });
+                    
+                    if([...monthsSet].includes(existingSelection)) {
+                        filterSelect.value = existingSelection;
+                    } else {
+                        filterSelect.value = "all";
+                    }
+                }
+
+                renderTransactions();
+                
+                const sS = document.getElementById('sourcePocket'); 
+                sS.innerHTML = appData.kantong.map(p => {
+                    const bal = p.balance || 0;
+                    const info = p.classification === "USD" ? `$ ${bal.toLocaleString('en-US')}` : `Rp ${bal.toLocaleString('id-ID')}`;
+                    return `<option value="${p.id}">${p.name} (${info})</option>`;
+                }).join('');
+                
+                const tS = document.getElementById('targetPocket'); 
+                tS.innerHTML = appData.kantong.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            } catch(err) {
+                console.error("Gagal saat merender UI komponen: ", err);
+            }
+        }
+
+        function renderTransactions() {
+            const tc = document.getElementById('transactionsContainer'); 
+            if(!tc) return;
+            tc.innerHTML = '';
+            
+            const filterSelect = document.getElementById('monthFilter');
+            const selectedFilter = filterSelect ? filterSelect.value : 'all';
+            
+            if(!appData.riwayat || !Array.isArray(appData.riwayat)) {
+                tc.innerHTML = '<div style="text-align:center; padding: 20px; font-size:12px; color:var(--text-muted);">Tidak ada transaksi.</div>';
+                return;
+            }
+
+            const filteredHistory = appData.riwayat.filter(t => {
+                if (selectedFilter === 'all') return true;
+                return getMonthYearKey(t.date) === selectedFilter;
             });
-            
-            const sS = document.getElementById('sourcePocket'); 
-            sS.innerHTML = appData.kantong.map(p => {
-                const info = p.classification === "USD" ? `$ ${p.balance.toLocaleString('en-US')}` : `Rp ${p.balance.toLocaleString('id-ID')}`;
-                return `<option value="${p.id}">${p.name} (${info})</option>`;
-            }).join('');
-            
-            const tS = document.getElementById('targetPocket'); 
-            tS.innerHTML = appData.kantong.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
+            if (filteredHistory.length === 0) {
+                tc.innerHTML = '<div style="text-align:center; padding: 20px; font-size:12px; color:var(--text-muted);">Tidak ada transaksi pada bulan ini.</div>';
+                return;
+            }
+
+            const groups = {};
+            filteredHistory.forEach(t => {
+                const key = getMonthYearKey(t.date);
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(t);
+            });
+
+            for (const [monthLabel, transactions] of Object.entries(groups)) {
+                let groupHtml = `
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); margin: 14px 0 8px 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        ${monthLabel}
+                    </div>
+                    <div class="transaction-list" style="margin-bottom: 16px;">
+                `;
+                
+                transactions.forEach(t => {
+                    let statusColor = '#3b82f6'; 
+                    let prefix = '-';
+                    if(t.type === 'in') { statusColor = 'var(--gopay-green)'; prefix = '+'; }
+                    else if(t.type === 'out') { statusColor = 'var(--gopay-red)'; prefix = '-'; }
+                    else if(t.type === 'move') { statusColor = 'var(--text-muted)'; prefix = ''; }
+
+                    const amt = t.amount || 0;
+                    let nominalDisplay = t.isUSD ? `$ ${amt.toLocaleString('en-US')}` : `Rp ${amt.toLocaleString('id-ID')}`;
+
+                    groupHtml += `
+                        <div class="transaction-item">
+                            <div class="tx-left">
+                                <div class="tx-icon-wrapper">
+                                    <i class="fa-solid ${t.icon || 'fa-exchange-alt'}"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:13px; font-weight:600; color:var(--text-main);">${t.title || 'Transaksi'}</div>
+                                    <div style="font-size:10px; color:var(--text-muted)">${t.date || ''}</div>
+                                </div>
+                            </div>
+                            <div style="font-weight:700; font-size:13px; color:${statusColor}">
+                                ${prefix} ${nominalDisplay}
+                            </div>
+                        </div>`;
+                });
+                
+                groupHtml += `</div>`;
+                tc.innerHTML += groupHtml;
+            }
         }
 
         function openModal(id) { document.getElementById(id).classList.add('active'); }
@@ -555,6 +691,8 @@ function fallbackCopyText(text) {
         window.onload = function() {
             render();
             fetchLiveExchangeRate();
+            // Menampilkan modal pemberitahuan biaya secara otomatis saat aplikasi dimuat
+            openModal('feeNoticeModal');
         };
     </script>
 </body>
