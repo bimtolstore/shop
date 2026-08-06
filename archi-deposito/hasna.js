@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 7.71,
+    "version": 7.72,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 87804, 
+            balance: 68089, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -57,11 +57,29 @@ const hasnaData = {
     ],
     riwayat: [
         {
-            id: "t44", 
-            title: "Biaya Transfer", 
+            id: "t46", 
+            title: "Biaya Transfer + Admin", 
             pocket: "Uang Jajan", 
             type: "out", 
-            amount: 1000, 
+            amount: 3000, 
+            date: "05 Agu 2026, 10:00", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t45", 
+            title: "Transfer Dana", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 10000, 
+            date: "06 Agu 2026, 10:00", 
+            icon: "fa-arrow-up" 
+        },
+        {
+            id: "t44", 
+            title: "Biaya Transfer + Admin", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 3000, 
             date: "05 Agu 2026, 10:00", 
             icon: "fa-minus" 
         },
@@ -94,10 +112,10 @@ const hasnaData = {
         },
         {
             id: "t40", 
-            title: "Biaya Transfer", 
+            title: "Biaya Transfer + Admin", 
             pocket: "Uang Jajan", 
             type: "out", 
-            amount: 2000, 
+            amount: 3000, 
             date: "03 Agu 2026, 05:22", 
             icon: "fa-minus" 
         },
@@ -112,10 +130,10 @@ const hasnaData = {
         },
         {
             id: "t38", 
-            title: "Biaya Transfer", 
+            title: "Biaya Transfer + Admin", 
             pocket: "Uang Jajan", 
             type: "out", 
-            amount: 2000, 
+            amount: 3000, 
             date: "02 Agu 2026, 18:08", 
             icon: "fa-minus" 
         },
@@ -139,10 +157,10 @@ const hasnaData = {
         },
         {
             id: "t35", 
-            title: "Bunga Bln Agustus (0,2%)", 
+            title: "Bunga Bln Agustus (2%)", 
             pocket: "Uang Jajan", 
             type: "in", 
-            amount: 17, 
+            amount: 132, 
             date: "01 Agu 2026, 00:01", 
             icon: "fa-plus" 
         },
@@ -151,7 +169,7 @@ const hasnaData = {
             title: "Biaya Layanan Bln Agustus", 
             pocket: "Uang Jajan", 
             type: "out", 
-            amount: 500, 
+            amount: 3100, 
             date: "01 Agu 2026, 00:01", 
             icon: "fa-minus" 
         },
