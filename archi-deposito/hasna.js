@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 7.72,
+    "version": 7.73,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 68089, 
+            balance: 50089, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -57,12 +57,30 @@ const hasnaData = {
     ],
     riwayat: [
         {
+            id: "t48", 
+            title: "Biaya Transfer + Admin", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 3000, 
+            date: "07 Agu 2026 - 07:00", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t47", 
+            title: "Transfer Dana", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 15000, 
+            date: "07 Agu 2026 - 07:00", 
+            icon: "fa-arrow-up" 
+        },
+        {
             id: "t46", 
             title: "Biaya Transfer + Admin", 
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 3000, 
-            date: "05 Agu 2026, 10:00", 
+            date: "05 Agu 2026 - 10:00", 
             icon: "fa-minus" 
         },
         {
@@ -71,7 +89,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 10000, 
-            date: "06 Agu 2026, 10:00", 
+            date: "06 Agu 2026 - 10:00", 
             icon: "fa-arrow-up" 
         },
         {
@@ -80,7 +98,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 3000, 
-            date: "05 Agu 2026, 10:00", 
+            date: "05 Agu 2026 - 10:00", 
             icon: "fa-minus" 
         },
         {
@@ -89,7 +107,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 15000, 
-            date: "05 Agu 2026, 10:00", 
+            date: "05 Agu 2026 - 10:00", 
             icon: "fa-arrow-up" 
         },
         {
@@ -98,7 +116,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 54500, 
-            date: "04 Agu 2026, 13.50", 
+            date: "04 Agu 2026 - 13.50", 
             icon: "fa-arrow-up" 
         },
         {
@@ -107,7 +125,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 54500, 
-            date: "03 Agu 2026, 13.00", 
+            date: "03 Agu 2026 - 13.00", 
             icon: "fa-arrow-up" 
         },
         {
@@ -116,7 +134,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 3000, 
-            date: "03 Agu 2026, 05:22", 
+            date: "03 Agu 2026 - 05:22", 
             icon: "fa-minus" 
         },
         {
@@ -125,7 +143,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 20000, 
-            date: "03 Agu 2026, 05:22", 
+            date: "03 Agu 2026 - 05:22", 
             icon: "fa-arrow-up" 
         },
         {
@@ -134,7 +152,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 3000, 
-            date: "02 Agu 2026, 18:08", 
+            date: "02 Agu 2026 - 18:08", 
             icon: "fa-minus" 
         },
         {
@@ -143,7 +161,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 55000, 
-            date: "02 Agu 2026, 18:08", 
+            date: "02 Agu 2026 - 18:08", 
             icon: "fa-arrow-up" 
         },
         {
@@ -152,7 +170,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "in", 
             amount: 208000, 
-            date: "02 Agu 2026, 14:40", 
+            date: "02 Agu 2026 - 14:40", 
             icon: "fa-plus" 
         },
         {
@@ -161,7 +179,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "in", 
             amount: 132, 
-            date: "01 Agu 2026, 00:01", 
+            date: "01 Agu 2026 - 00:01", 
             icon: "fa-plus" 
         },
         {
@@ -170,7 +188,7 @@ const hasnaData = {
             pocket: "Uang Jajan", 
             type: "out", 
             amount: 3100, 
-            date: "01 Agu 2026, 00:01", 
+            date: "01 Agu 2026 - 00:01", 
             icon: "fa-minus" 
         },
         {
