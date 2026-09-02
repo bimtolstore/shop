@@ -1,5 +1,5 @@
 const hasnaData = {
-    "version": 7.81,
+    "version": 7.85,
     "user": {
         "name": "Arch",
         "accountType": "Premium"
@@ -17,7 +17,7 @@ const hasnaData = {
         { 
             id: "k2", 
             name: "Uang Jajan", 
-            balance: 100000, 
+            balance: 11356, 
             classification: "pengeluaran", 
             icon: "fa-burger", 
             color: "#e63946" 
@@ -57,6 +57,42 @@ const hasnaData = {
     ],
     riwayat: [
         {
+            id: "t67", 
+            title: "Biaya Transfer + Admin", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 3000, 
+            date: "02 Sep 2026 - 18:00", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t66", 
+            title: "Transfer Dana", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 25000, 
+            date: "02 Sep 2026 - 18:00", 
+            icon: "fa-arrow-up" 
+        },
+        {
+            id: "t64", 
+            title: "Transfer Bank Jago", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 55000, 
+            date: "02 Sep 2026 - 12:00", 
+            icon: "fa-arrow-up" 
+        },
+        {
+            id: "t63", 
+            title: "Deposito Via Transfer", 
+            pocket: "Uang Jajan", 
+            type: "in", 
+            amount: 100000, 
+            date: "01 Sep 2026 - 18:31", 
+            icon: "fa-plus" 
+        },
+        {
             id: "t62", 
             title: "Transfer Dana", 
             pocket: "Uang Jajan", 
@@ -64,6 +100,33 @@ const hasnaData = {
             amount: 22835, 
             date: "01 Sep 2026 - 00:00", 
             icon: "fa-arrow-up" 
+        },
+        {
+            id: "t68", 
+            title: "Bunga Bln September (2%)", 
+            pocket: "Uang Jajan", 
+            type: "in", 
+            amount: 456, 
+            date: "01 Sep 2026 - 00:00", 
+            icon: "fa-plus" 
+        },
+        {
+            id: "t34", 
+            title: "Biaya Layanan Bln September", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 3100, 
+            date: "01 Sep 2026 - 00:00", 
+            icon: "fa-minus" 
+        },
+        {
+            id: "t65", 
+            title: "Biaya Transfer + Admin", 
+            pocket: "Uang Jajan", 
+            type: "out", 
+            amount: 3000, 
+            date: "31 Agu 2026 - 18:22", 
+            icon: "fa-minus" 
         },
         {
             id: "t61", 
